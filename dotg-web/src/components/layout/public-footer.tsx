@@ -1,21 +1,22 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { publicNavigation } from "@/config/navigation";
-import { siteConfig } from "@/config/site";
+import { getPublicSiteSettings } from "@/features/settings/public-queries";
 
-export function PublicFooter() {
+export async function PublicFooter() {
   const currentYear = new Date().getFullYear();
+  const siteSettings = await getPublicSiteSettings();
 
   return (
     <footer className="border-t border-border bg-surface text-foreground">
       <Container className="grid gap-8 py-10 md:grid-cols-[1fr_auto]">
         <div className="space-y-3">
-          <p className="text-lg font-semibold">{siteConfig.name}</p>
+          <p className="text-lg font-semibold">{siteSettings.name}</p>
           <p className="max-w-xl text-sm leading-6 text-neutral-600 dark:text-neutral-300">
-            게임을 기획하고 개발하며 경험을 공유하는 게임창작부입니다.
+            {siteSettings.shortDescription}
           </p>
           <p className="text-xs text-neutral-500">
-            © {currentYear} {siteConfig.name}. All rights reserved.
+            © {currentYear} {siteSettings.name}. All rights reserved.
           </p>
         </div>
 

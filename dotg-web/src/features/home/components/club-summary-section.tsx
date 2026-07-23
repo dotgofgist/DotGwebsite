@@ -2,15 +2,17 @@ import Link from "next/link";
 import { buttonClasses } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
-import { siteConfig } from "@/config/site";
+import { getPublicSiteSettings } from "@/features/settings/public-queries";
 
 const values = [
   "함께 만드는 프로젝트",
-  "분야를 넘나드는 협업",
+  "분야를 잇는 작업",
   "완성까지 이어가는 경험",
 ];
 
-export function ClubSummarySection() {
+export async function ClubSummarySection() {
+  const siteSettings = await getPublicSiteSettings();
+
   return (
     <section className="py-16">
       <Container className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
@@ -20,8 +22,7 @@ export function ClubSummarySection() {
             아이디어가 플레이 가능한 경험이 되는 곳
           </h2>
           <p className="text-sm leading-7 text-neutral-600 dark:text-neutral-300">
-            {siteConfig.shortDescription}. 작은 실험부터 팀 프로젝트까지,
-            서로의 작업 과정을 공유하며 게임 제작을 배워갑니다.
+            {siteSettings.shortDescription}
           </p>
           <Link
             className={buttonClasses({ variant: "secondary" })}

@@ -8,6 +8,21 @@ function isExternalHref(href: string): boolean {
 export async function ContactCard() {
   const contactItems = await getPublicContactItems();
 
+  if (contactItems.length === 0) {
+    return (
+      <Card>
+        <CardContent className="p-8 text-center">
+          <h2 className="text-xl font-semibold tracking-normal">
+            현재 등록된 연락처가 없습니다
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-neutral-500">
+            확인된 연락 수단이 생기면 이 페이지에 표시됩니다.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="grid gap-4 md:grid-cols-2">
       {contactItems.map((item) => (

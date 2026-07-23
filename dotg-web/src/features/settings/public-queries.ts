@@ -1,30 +1,80 @@
-import { contactItems } from "@/config/contact";
+import { contactItems as configContactItems } from "@/config/contact";
 import { siteConfig } from "@/config/site";
-import { socialLinks } from "@/config/social";
+import { socialLinks as configSocialLinks } from "@/config/social";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import {
+  mapContactItemRowToContactItem,
+  mapSiteSettingsRowToSettings,
+  mapSocialLinkRowToSocialLink,
+} from "./admin-mappers";
+import type { ContactItem, SiteSettings, SocialLink } from "./types";
 
-function ensureGeneratedDatabaseTypes(scope: string): void {
-  if (isSupabaseConfigured()) {
-    throw new Error(
-      `${scope} Supabase 조회를 위해 src/lib/supabase/database.types.ts 생성이 필요합니다.`,
-    );
+function mapConfigSiteSettings(): SiteSettings {
+  return {
+    name: siteConfig.name,
+    title: siteConfig.title,
+    description: siteConfig.description,
+    shortDescription: siteConfig.shortDescription,
+  };
+}
+
+export async function getPublicSiteSettings(): Promise<SiteSettings> {
+  if (!isSupabaseConfigured()) {
+    return mapConfigSiteSettings();
   }
+
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("site_settings")
+    .select("id, name, title, description, short_description, updated_by, created_at, updated_at")
+    .eq("id", 1)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error("사이트 설정을 불러오지 못했습니다.");
+  }
+
+  return data ? mapSiteSettingsRowToSettings(data) : mapConfigSiteSettings();
 }
 
-export async function getPublicSiteSettings() {
-  ensureGeneratedDatabaseTypes("사이트 설정");
+export async function getPublicContactItems(): Promise<ContactItem[]> {
+  if (!isSupabaseConfigured()) {
+    return configContactItems;
+  }
 
-  return siteConfig;
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("contact_items")
+    .select("id, label, value, href, description, is_active, sort_order, created_at, updated_at")
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    throw new Error("연락처를 불러오지 못했습니다.");
+  }
+
+  return data.map((row) => mapContactItemRowToContactItem(row));
 }
 
-export async function getPublicContactItems() {
-  ensureGeneratedDatabaseTypes("연락처");
+export async function getPublicSocialLinks(): Promise<SocialLink[]> {
+  if (!isSupabaseConfigured()) {
+    return configSocialLinks;
+  }
 
-  return contactItems;
-}
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("social_links")
+    .select("id, platform, label, url, description, is_active, sort_order, created_at, updated_at")
+    .eq("is_active", true)
+    .not("url", "is", null)
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true });
 
-export async function getPublicSocialLinks() {
-  ensureGeneratedDatabaseTypes("SNS 링크");
+  if (error) {
+    throw new Error("SNS 링크를 불러오지 못했습니다.");
+  }
 
-  return socialLinks;
+  return data.map((row) => mapSocialLinkRowToSocialLink(row));
 }

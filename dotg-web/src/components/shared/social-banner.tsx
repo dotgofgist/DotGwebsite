@@ -2,12 +2,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
 import { getPublicSocialLinks } from "@/features/settings/public-queries";
 
-function hasConfiguredUrl(href: string): boolean {
-  return href !== "#";
-}
-
 export async function SocialBanner() {
   const socialLinks = await getPublicSocialLinks();
+
+  if (socialLinks.length === 0) {
+    return null;
+  }
 
   return (
     <section className="border-y border-border bg-surface py-14">
@@ -16,17 +16,15 @@ export async function SocialBanner() {
           <div className="space-y-3">
             <p className="text-sm font-semibold text-primary">SNS</p>
             <h2 className="text-2xl font-semibold tracking-normal sm:text-3xl">
-              활동 소식이 모이는 곳
+              활동 소식을 모아 보는 곳
             </h2>
             <p className="max-w-xl text-sm leading-6 text-neutral-600 dark:text-neutral-300">
-              실제 SNS 주소가 확정되면 이 영역에서 프로젝트 기록과 동아리
-              소식을 연결합니다.
+              공개된 SNS 채널을 통해 프로젝트 기록과 동아리 소식을 확인할 수 있습니다.
             </p>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
             {socialLinks.map((link) => {
-              const configured = hasConfiguredUrl(link.href);
               const initials = link.name.slice(0, 2).toUpperCase();
 
               return (
@@ -39,23 +37,14 @@ export async function SocialBanner() {
                       {initials}
                     </span>
                     <div className="min-w-0 space-y-1">
-                      {configured ? (
-                        <a
-                          className="inline-flex rounded-md text-sm font-semibold hover:text-primary focus-visible:text-primary"
-                          href={link.href}
-                          rel="noreferrer noopener"
-                          target="_blank"
-                        >
-                          {link.label} 새 탭에서 열기
-                        </a>
-                      ) : (
-                        <p
-                          aria-disabled="true"
-                          className="text-sm font-semibold text-foreground"
-                        >
-                          {link.label} 준비 중
-                        </p>
-                      )}
+                      <a
+                        className="inline-flex rounded-md text-sm font-semibold hover:text-primary focus-visible:text-primary"
+                        href={link.href}
+                        rel="noreferrer noopener"
+                        target="_blank"
+                      >
+                        {link.label} 새 탭에서 열기
+                      </a>
                       {link.description ? (
                         <p className="text-sm leading-6 text-neutral-600 dark:text-neutral-300">
                           {link.description}
