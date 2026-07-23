@@ -1,5 +1,10 @@
-import { Container } from "@/components/ui/container";
-import { SectionHeading } from "@/components/ui/section-heading";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { ProjectDetail } from "@/features/projects/components/project-detail";
+import {
+  getAllProjects,
+  getProjectBySlug,
+} from "@/features/projects/queries";
 
 type ProjectDetailPageProps = {
   params: Promise<{
@@ -7,17 +12,40 @@ type ProjectDetailPageProps = {
   }>;
 };
 
+export function generateStaticParams() {
+  return getAllProjects().map((project) => ({
+    slug: project.slug,
+  }));
+}
+
+export async function generateMetadata({
+  params,
+}: ProjectDetailPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const project = getProjectBySlug(slug);
+
+  if (!project) {
+    return {
+      title: "프로젝트를 찾을 수 없습니다",
+      description: "요청한 프로젝트가 존재하지 않습니다.",
+    };
+  }
+
+  return {
+    title: project.title,
+    description: project.summary,
+  };
+}
+
 export default async function ProjectDetailPage({
   params,
 }: ProjectDetailPageProps) {
   const { slug } = await params;
+  const project = getProjectBySlug(slug);
 
-  return (
-    <Container className="py-16">
-      <SectionHeading
-        title="프로젝트 상세"
-        description={`프로젝트 slug "${slug}"에 해당하는 상세 콘텐츠는 이후 단계에서 구현합니다.`}
-      />
-    </Container>
-  );
+  if (!project) {
+    notFound();
+  }
+
+  return <ProjectDetail project={project} />;
 }

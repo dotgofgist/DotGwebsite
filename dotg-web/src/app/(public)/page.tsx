@@ -1,13 +1,27 @@
-import { Container } from "@/components/ui/container";
-import { SectionHeading } from "@/components/ui/section-heading";
+import type { Metadata } from "next";
+import { SocialBanner } from "@/components/shared/social-banner";
+import { ActivitySection } from "@/features/home/components/activity-section";
+import { ClubSummarySection } from "@/features/home/components/club-summary-section";
+import { FeaturedProjectsSection } from "@/features/home/components/featured-projects-section";
+import { HeroSection } from "@/features/home/components/hero-section";
+import { LatestNoticesSection } from "@/features/home/components/latest-notices-section";
+import { RecruitmentCtaSection } from "@/features/home/components/recruitment-cta-section";
+
+export const metadata: Metadata = {
+  title: "DotG",
+  description: "게임 제작 동아리 DotG의 활동과 프로젝트를 소개합니다.",
+};
 
 export default function HomePage() {
   return (
-    <Container className="py-16">
-      <SectionHeading
-        title="DotG"
-        description="게임창작부 웹사이트의 메인 페이지입니다. 이후 단계에서 동아리 소개, 프로젝트, 공지, 모집 정보를 한눈에 볼 수 있도록 구현합니다."
-      />
-    </Container>
+    <>
+      <HeroSection />
+      <ClubSummarySection />
+      <ActivitySection />
+      <FeaturedProjectsSection />
+      <LatestNoticesSection />
+      <RecruitmentCtaSection />
+      <SocialBanner />
+    </>
   );
 }

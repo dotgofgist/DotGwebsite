@@ -1,13 +1,24 @@
+import type { Metadata } from "next";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { ProjectGrid } from "@/features/projects/components/project-grid";
+import { getAllProjects } from "@/features/projects/queries";
+
+export const metadata: Metadata = {
+  title: "프로젝트",
+  description: "DotG 게임창작부에서 진행하는 프로젝트를 소개합니다.",
+};
 
 export default function ProjectsPage() {
+  const projects = getAllProjects();
+
   return (
-    <Container className="py-16">
+    <Container className="space-y-10 py-16">
       <SectionHeading
         title="프로젝트"
-        description="동아리에서 제작한 게임 프로젝트 목록과 필터 기능은 이후 단계에서 구현합니다."
+        description="아이디어를 실제 게임으로 발전시키는 과정을 소개합니다."
       />
+      <ProjectGrid projects={projects} />
     </Container>
   );
 }
