@@ -1,14 +1,21 @@
 import Link from "next/link";
+import { AdminEmptyState } from "@/components/shared/admin-empty-state";
 import { Badge } from "@/components/ui/badge";
 import { buttonClasses } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { AdminEmptyState } from "@/components/shared/admin-empty-state";
-import { ConfirmDialog } from "@/components/shared/confirm-dialog";
-import type { Project } from "../types";
+import { formatDate } from "@/lib/utils/date";
+import type { AdminProject, ContentStatus } from "../types";
+import { ProjectDeleteForm } from "./project-delete-form";
 import { ProjectStatusBadge } from "./project-status-badge";
 
 type ProjectTableProps = {
-  projects: Project[];
+  projects: AdminProject[];
+};
+
+const publicationLabels: Record<ContentStatus, string> = {
+  draft: "초안",
+  published: "공개",
+  archived: "보관",
 };
 
 export function ProjectTable({ projects }: ProjectTableProps) {
@@ -16,7 +23,7 @@ export function ProjectTable({ projects }: ProjectTableProps) {
     return (
       <AdminEmptyState
         title="등록된 프로젝트가 없습니다"
-        description="프로젝트가 준비되면 이곳에서 관리할 수 있습니다."
+        description="새 프로젝트를 생성하면 이 목록에서 관리할 수 있습니다."
       />
     );
   }
@@ -24,13 +31,14 @@ export function ProjectTable({ projects }: ProjectTableProps) {
   return (
     <Card className="bg-surface">
       <CardContent className="overflow-x-auto p-0">
-        <table className="w-full min-w-[760px] text-left text-sm">
+        <table className="w-full min-w-[900px] text-left text-sm">
           <thead className="border-b border-border text-neutral-400">
             <tr>
               <th className="px-4 py-3 font-medium" scope="col">프로젝트</th>
-              <th className="px-4 py-3 font-medium" scope="col">상태</th>
+              <th className="px-4 py-3 font-medium" scope="col">개발 상태</th>
+              <th className="px-4 py-3 font-medium" scope="col">공개 상태</th>
               <th className="px-4 py-3 font-medium" scope="col">태그</th>
-              <th className="px-4 py-3 font-medium" scope="col">대표</th>
+              <th className="px-4 py-3 font-medium" scope="col">수정일</th>
               <th className="px-4 py-3 font-medium" scope="col">관리</th>
             </tr>
           </thead>
@@ -42,9 +50,17 @@ export function ProjectTable({ projects }: ProjectTableProps) {
                   <p className="mt-1 max-w-sm break-words text-xs text-neutral-400">
                     {project.slug}
                   </p>
+                  {project.featured ? (
+                    <p className="mt-2 text-xs font-medium text-primary">
+                      대표 프로젝트
+                    </p>
+                  ) : null}
                 </td>
                 <td className="px-4 py-4 align-top">
                   <ProjectStatusBadge status={project.status} />
+                </td>
+                <td className="px-4 py-4 align-top">
+                  <Badge>{publicationLabels[project.publicationStatus]}</Badge>
                 </td>
                 <td className="px-4 py-4 align-top">
                   <div className="flex flex-wrap gap-2">
@@ -54,7 +70,7 @@ export function ProjectTable({ projects }: ProjectTableProps) {
                   </div>
                 </td>
                 <td className="px-4 py-4 align-top">
-                  {project.featured ? "대표" : "일반"}
+                  {formatDate(project.updatedAt) ?? "-"}
                 </td>
                 <td className="px-4 py-4 align-top">
                   <div className="flex flex-wrap gap-2">
@@ -62,18 +78,24 @@ export function ProjectTable({ projects }: ProjectTableProps) {
                       className={buttonClasses({ size: "sm", variant: "secondary" })}
                       href={`/admin/projects/${project.id}/edit`}
                     >
-                      {project.title} 수정
+                      수정
                     </Link>
-                    <Link
-                      className={buttonClasses({ size: "sm", variant: "ghost" })}
-                      href={`/projects/${project.slug}`}
-                    >
-                      공개 보기
-                    </Link>
-                    <ConfirmDialog
-                      description={`${project.title} 삭제 기능은 아직 연결되지 않았습니다.`}
-                      title={`${project.title} 삭제 확인`}
-                      triggerLabel="삭제"
+                    {project.publicationStatus === "published" ? (
+                      <Link
+                        className={buttonClasses({ size: "sm", variant: "ghost" })}
+                        href={`/projects/${project.slug}`}
+                      >
+                        공개 보기
+                      </Link>
+                    ) : (
+                      <span className="inline-flex min-h-9 items-center rounded-md px-3 text-sm text-neutral-500">
+                        공개 안 됨
+                      </span>
+                    )}
+                    <ProjectDeleteForm
+                      id={project.id}
+                      slug={project.slug}
+                      title={project.title}
                     />
                   </div>
                 </td>

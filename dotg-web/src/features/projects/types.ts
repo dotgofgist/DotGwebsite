@@ -1,4 +1,7 @@
-export type ProjectStatus = "planning" | "developing" | "released";
+import type { Database } from "@/lib/supabase/database.types";
+
+export type ProjectStatus = Database["public"]["Enums"]["project_status"];
+export type ContentStatus = Database["public"]["Enums"]["content_status"];
 
 export type ProjectLinkType =
   | "github"
@@ -34,4 +37,12 @@ export type Project = {
   startedAt?: string;
   releasedAt?: string;
   createdAt: string;
+};
+
+export type AdminProject = Project & {
+  publicationStatus: ContentStatus;
+  publishedAt?: string;
+  sortOrder: number;
+  thumbnailPath?: string;
+  updatedAt: string;
 };

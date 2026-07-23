@@ -6,8 +6,8 @@ import { Container } from "@/components/ui/container";
 import { getLatestNotices } from "@/features/notices/queries";
 import { formatDate } from "@/lib/utils/date";
 
-export function LatestNoticesSection() {
-  const latestNotices = getLatestNotices(3);
+export async function LatestNoticesSection() {
+  const latestNotices = await getLatestNotices(3);
 
   return (
     <section className="bg-surface py-16">

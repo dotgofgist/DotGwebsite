@@ -5,10 +5,12 @@ import { ProjectEmptyState } from "@/features/projects/components/project-empty-
 import { ProjectGrid } from "@/features/projects/components/project-grid";
 import { getAllProjects, getFeaturedProjects } from "@/features/projects/queries";
 
-export function FeaturedProjectsSection() {
-  const featuredProjects = getFeaturedProjects(3);
+export async function FeaturedProjectsSection() {
+  const featuredProjects = await getFeaturedProjects(3);
   const projects =
-    featuredProjects.length > 0 ? featuredProjects : getAllProjects().slice(0, 3);
+    featuredProjects.length > 0
+      ? featuredProjects
+      : (await getAllProjects()).slice(0, 3);
 
   return (
     <section className="py-16">

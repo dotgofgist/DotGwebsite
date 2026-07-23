@@ -1,12 +1,22 @@
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { notices } from "./mock-data";
 import type { Notice } from "./types";
 
-// TODO: Supabase 스키마 및 Repository 구현 후 mock data를 실제 조회로 교체
+function ensureGeneratedDatabaseTypes(scope: string): void {
+  if (isSupabaseConfigured()) {
+    throw new Error(
+      `${scope} Supabase 조회를 위해 src/lib/supabase/database.types.ts 생성이 필요합니다.`,
+    );
+  }
+}
+
 function compareNoticeDate(a: Notice, b: Notice): number {
   return b.publishedAt.localeCompare(a.publishedAt);
 }
 
-export function getAllNotices(): Notice[] {
+export async function getAllNotices(): Promise<Notice[]> {
+  ensureGeneratedDatabaseTypes("공개 공지사항 목록");
+
   return notices
     .map((notice, index) => ({ notice, index }))
     .sort((a, b) => {
@@ -25,7 +35,9 @@ export function getAllNotices(): Notice[] {
     .map(({ notice }) => notice);
 }
 
-export function getLatestNotices(limit?: number): Notice[] {
+export async function getLatestNotices(limit?: number): Promise<Notice[]> {
+  ensureGeneratedDatabaseTypes("최신 공지사항");
+
   const latestNotices = [...notices].sort(compareNoticeDate);
 
   if (typeof limit === "number") {
@@ -35,10 +47,16 @@ export function getLatestNotices(limit?: number): Notice[] {
   return latestNotices;
 }
 
-export function getNoticeBySlug(slug: string): Notice | undefined {
+export async function getNoticeBySlug(
+  slug: string,
+): Promise<Notice | undefined> {
+  ensureGeneratedDatabaseTypes("공개 공지사항 상세");
+
   return notices.find((notice) => notice.slug === slug);
 }
 
-export function getPinnedNotices(): Notice[] {
-  return getAllNotices().filter((notice) => notice.pinned);
+export async function getPinnedNotices(): Promise<Notice[]> {
+  const allNotices = await getAllNotices();
+
+  return allNotices.filter((notice) => notice.pinned);
 }

@@ -60,3 +60,38 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 ## Supabase 타입
 
 `src/lib/supabase/database.types.ts`는 현재 placeholder 타입입니다. 실제 Supabase 프로젝트와 스키마가 준비되면 Supabase CLI로 생성한 타입으로 교체합니다.
+
+## Supabase Local Development
+
+```powershell
+pnpm install
+pnpm supabase start
+pnpm supabase db reset
+pnpm supabase test db
+pnpm run supabase:types
+```
+
+Running the full local Supabase stack requires Docker Desktop or another compatible Docker runtime.
+
+## Migration Principles
+
+- Manage database schema changes with migration files.
+- Do not change the schema directly in a remote Dashboard.
+- Add a new migration for each new schema change.
+- Do not edit migrations that have already been applied to shared environments.
+
+## Current App Data State
+
+This phase prepares the local Supabase schema, seed data, tests, and RLS policies. The Next.js app still renders projects, notices, and recruitment content from the existing TypeScript mock data.
+
+## Admin Authentication
+
+- Admin login uses Supabase email/password Auth at `/admin/login`.
+- Only `editor` and `admin` profile roles can access `/admin`.
+- `member` accounts cannot access admin content.
+- Public signup is not implemented.
+- See `docs/authentication.md` for admin account setup.
+
+## Current Admin Feature State
+
+Login and route protection are wired for Supabase Auth. Content create, update, and delete screens still use mock UI/data and do not persist changes yet.

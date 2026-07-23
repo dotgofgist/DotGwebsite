@@ -1,11 +1,13 @@
-import { contactItems } from "@/config/contact";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getPublicContactItems } from "@/features/settings/public-queries";
 
 function isExternalHref(href: string): boolean {
   return href.startsWith("http://") || href.startsWith("https://");
 }
 
-export function ContactCard() {
+export async function ContactCard() {
+  const contactItems = await getPublicContactItems();
+
   return (
     <div className="grid gap-4 md:grid-cols-2">
       {contactItems.map((item) => (

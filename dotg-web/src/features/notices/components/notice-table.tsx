@@ -1,14 +1,21 @@
 import Link from "next/link";
+import { AdminEmptyState } from "@/components/shared/admin-empty-state";
+import { Badge } from "@/components/ui/badge";
 import { buttonClasses } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { AdminEmptyState } from "@/components/shared/admin-empty-state";
-import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { formatDate } from "@/lib/utils/date";
-import type { Notice } from "../types";
+import type { AdminNotice, ContentStatus } from "../types";
+import { NoticeDeleteForm } from "./notice-delete-form";
 import { NoticePinnedBadge } from "./notice-pinned-badge";
 
 type NoticeTableProps = {
-  notices: Notice[];
+  notices: AdminNotice[];
+};
+
+const publicationLabels: Record<ContentStatus, string> = {
+  draft: "초안",
+  published: "공개",
+  archived: "보관",
 };
 
 export function NoticeTable({ notices }: NoticeTableProps) {
@@ -16,7 +23,7 @@ export function NoticeTable({ notices }: NoticeTableProps) {
     return (
       <AdminEmptyState
         title="등록된 공지사항이 없습니다"
-        description="공지사항이 준비되면 이곳에서 관리할 수 있습니다."
+        description="새 공지사항을 생성하면 이 목록에서 관리할 수 있습니다."
       />
     );
   }
@@ -24,11 +31,13 @@ export function NoticeTable({ notices }: NoticeTableProps) {
   return (
     <Card className="bg-surface">
       <CardContent className="overflow-x-auto p-0">
-        <table className="w-full min-w-[720px] text-left text-sm">
+        <table className="w-full min-w-[860px] text-left text-sm">
           <thead className="border-b border-border text-neutral-400">
             <tr>
               <th className="px-4 py-3 font-medium" scope="col">공지</th>
+              <th className="px-4 py-3 font-medium" scope="col">공개 상태</th>
               <th className="px-4 py-3 font-medium" scope="col">발행일</th>
+              <th className="px-4 py-3 font-medium" scope="col">수정일</th>
               <th className="px-4 py-3 font-medium" scope="col">고정</th>
               <th className="px-4 py-3 font-medium" scope="col">관리</th>
             </tr>
@@ -43,10 +52,16 @@ export function NoticeTable({ notices }: NoticeTableProps) {
                   </p>
                 </td>
                 <td className="px-4 py-4 align-top">
-                  {formatDate(notice.publishedAt) ?? "날짜 확인 필요"}
+                  <Badge>{publicationLabels[notice.publicationStatus]}</Badge>
                 </td>
                 <td className="px-4 py-4 align-top">
-                  <NoticePinnedBadge pinned={notice.pinned} />
+                  {notice.publishedAt ? formatDate(notice.publishedAt) : "-"}
+                </td>
+                <td className="px-4 py-4 align-top">
+                  {formatDate(notice.updatedAt) ?? "-"}
+                </td>
+                <td className="px-4 py-4 align-top">
+                  {notice.pinned ? <NoticePinnedBadge pinned /> : "일반"}
                 </td>
                 <td className="px-4 py-4 align-top">
                   <div className="flex flex-wrap gap-2">
@@ -54,18 +69,24 @@ export function NoticeTable({ notices }: NoticeTableProps) {
                       className={buttonClasses({ size: "sm", variant: "secondary" })}
                       href={`/admin/notices/${notice.id}/edit`}
                     >
-                      {notice.title} 수정
+                      수정
                     </Link>
-                    <Link
-                      className={buttonClasses({ size: "sm", variant: "ghost" })}
-                      href={`/notices/${notice.slug}`}
-                    >
-                      공개 보기
-                    </Link>
-                    <ConfirmDialog
-                      description={`${notice.title} 삭제 기능은 아직 연결되지 않았습니다.`}
-                      title={`${notice.title} 삭제 확인`}
-                      triggerLabel="삭제"
+                    {notice.publicationStatus === "published" ? (
+                      <Link
+                        className={buttonClasses({ size: "sm", variant: "ghost" })}
+                        href={`/notices/${notice.slug}`}
+                      >
+                        공개 보기
+                      </Link>
+                    ) : (
+                      <span className="inline-flex min-h-9 items-center rounded-md px-3 text-sm text-neutral-500">
+                        공개 안 됨
+                      </span>
+                    )}
+                    <NoticeDeleteForm
+                      id={notice.id}
+                      slug={notice.slug}
+                      title={notice.title}
                     />
                   </div>
                 </td>

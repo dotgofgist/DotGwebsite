@@ -5,18 +5,18 @@ import { AdminPageHeader } from "@/components/shared/admin-page-header";
 import { AdminPlaceholderNotice } from "@/components/shared/admin-placeholder-notice";
 import { DashboardSummary } from "@/features/admin/components/dashboard-summary";
 import { RecentContentList } from "@/features/admin/components/recent-content-list";
-import { getAllNotices } from "@/features/notices/queries";
-import { getAllProjects } from "@/features/projects/queries";
-import { getCurrentRecruitment } from "@/features/recruitment/queries";
+import { getAllAdminNotices } from "@/features/notices/admin-queries";
+import { getAllAdminProjects } from "@/features/projects/admin-queries";
+import { getCurrentAdminRecruitment } from "@/features/recruitment/admin-queries";
 
 export const metadata: Metadata = {
   title: "관리자 대시보드",
 };
 
-export default function AdminDashboardPage() {
-  const projects = getAllProjects();
-  const notices = getAllNotices();
-  const recruitment = getCurrentRecruitment();
+export default async function AdminDashboardPage() {
+  const projects = await getAllAdminProjects();
+  const notices = await getAllAdminNotices();
+  const recruitment = await getCurrentAdminRecruitment();
 
   return (
     <div className="space-y-8">

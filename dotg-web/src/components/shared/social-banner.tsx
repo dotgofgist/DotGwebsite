@@ -1,12 +1,14 @@
-import { socialLinks } from "@/config/social";
 import { Card, CardContent } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
+import { getPublicSocialLinks } from "@/features/settings/public-queries";
 
 function hasConfiguredUrl(href: string): boolean {
   return href !== "#";
 }
 
-export function SocialBanner() {
+export async function SocialBanner() {
+  const socialLinks = await getPublicSocialLinks();
+
   return (
     <section className="border-y border-border bg-surface py-14">
       <Container>

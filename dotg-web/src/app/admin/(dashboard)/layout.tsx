@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { AdminHeader } from "@/components/layout/admin-header";
 import { AdminSidebar } from "@/components/layout/admin-sidebar";
+import { requireContentManager } from "@/features/auth/server";
 
 export const metadata: Metadata = {
   robots: {
@@ -14,6 +15,8 @@ export default function AdminDashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const managerPromise = requireContentManager();
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <a
@@ -24,8 +27,11 @@ export default function AdminDashboardLayout({
       </a>
       <AdminSidebar />
       <div className="min-w-0 lg:pl-64">
-        <AdminHeader />
-        <main className="min-w-0 px-4 py-8 sm:px-6 lg:px-8" id="admin-main-content">
+        <AdminHeader managerPromise={managerPromise} />
+        <main
+          className="min-w-0 px-4 py-8 sm:px-6 lg:px-8"
+          id="admin-main-content"
+        >
           {children}
         </main>
       </div>

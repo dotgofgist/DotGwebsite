@@ -1,9 +1,61 @@
-import { recruitment } from "./mock-data";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { mapRecruitmentRowToRecruitment } from "./admin-mappers";
 import type { Recruitment } from "./types";
 
-// TODO: Supabase 스키마 및 Repository 구현 후 mock data를 실제 조회로 교체
-export function getCurrentRecruitment(): Recruitment {
-  return recruitment;
+export async function getCurrentRecruitment(): Promise<Recruitment | null> {
+  if (!isSupabaseConfigured()) {
+    return null;
+  }
+
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("recruitments")
+    .select(
+      `
+        id,
+        title,
+        summary,
+        status,
+        publication_status,
+        is_current,
+        target,
+        qualifications,
+        activities,
+        starts_at,
+        ends_at,
+        application_url,
+        application_label,
+        contact_label,
+        contact_value,
+        contact_href,
+        published_at,
+        created_at,
+        updated_at,
+        recruitment_steps (
+          id,
+          recruitment_id,
+          title,
+          description,
+          sort_order,
+          created_at,
+          updated_at
+        )
+      `,
+    )
+    .eq("is_current", true)
+    .eq("publication_status", "published")
+    .order("sort_order", {
+      referencedTable: "recruitment_steps",
+      ascending: true,
+    })
+    .maybeSingle();
+
+  if (error) {
+    throw new Error("모집 정보를 불러오지 못했습니다.");
+  }
+
+  return data ? mapRecruitmentRowToRecruitment(data) : null;
 }
 
 export function isRecruitmentOpen(

@@ -1,12 +1,21 @@
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { projects } from "./mock-data";
 import type { Project, ProjectStatus } from "./types";
 
-// TODO: Supabase 스키마 및 Repository 구현 후 mock data를 실제 조회로 교체
 const statusOrder: Record<ProjectStatus, number> = {
   developing: 1,
   planning: 2,
   released: 3,
+  archived: 4,
 };
+
+function ensureGeneratedDatabaseTypes(scope: string): void {
+  if (isSupabaseConfigured()) {
+    throw new Error(
+      `${scope} Supabase 조회를 위해 src/lib/supabase/database.types.ts 생성이 필요합니다.`,
+    );
+  }
+}
 
 function sortProjects(projectList: Project[]): Project[] {
   return [...projectList].sort((a, b) => {
@@ -24,11 +33,15 @@ function sortProjects(projectList: Project[]): Project[] {
   });
 }
 
-export function getAllProjects(): Project[] {
+export async function getAllProjects(): Promise<Project[]> {
+  ensureGeneratedDatabaseTypes("공개 프로젝트 목록");
+
   return sortProjects(projects);
 }
 
-export function getFeaturedProjects(limit?: number): Project[] {
+export async function getFeaturedProjects(limit?: number): Promise<Project[]> {
+  ensureGeneratedDatabaseTypes("대표 프로젝트");
+
   const featuredProjects = sortProjects(
     projects.filter((project) => project.featured),
   );
@@ -40,10 +53,18 @@ export function getFeaturedProjects(limit?: number): Project[] {
   return featuredProjects;
 }
 
-export function getProjectBySlug(slug: string): Project | undefined {
+export async function getProjectBySlug(
+  slug: string,
+): Promise<Project | undefined> {
+  ensureGeneratedDatabaseTypes("공개 프로젝트 상세");
+
   return projects.find((project) => project.slug === slug);
 }
 
-export function getProjectsByStatus(status: ProjectStatus): Project[] {
+export async function getProjectsByStatus(
+  status: ProjectStatus,
+): Promise<Project[]> {
+  ensureGeneratedDatabaseTypes("공개 프로젝트 상태별 목록");
+
   return sortProjects(projects.filter((project) => project.status === status));
 }

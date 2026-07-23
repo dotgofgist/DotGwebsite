@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NoticeDetail } from "@/features/notices/components/notice-detail";
-import { getAllNotices, getNoticeBySlug } from "@/features/notices/queries";
+import { getNoticeBySlug } from "@/features/notices/queries";
 
 type NoticeDetailPageProps = {
   params: Promise<{
@@ -9,17 +9,11 @@ type NoticeDetailPageProps = {
   }>;
 };
 
-export function generateStaticParams() {
-  return getAllNotices().map((notice) => ({
-    slug: notice.slug,
-  }));
-}
-
 export async function generateMetadata({
   params,
 }: NoticeDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const notice = getNoticeBySlug(slug);
+  const notice = await getNoticeBySlug(slug);
 
   if (!notice) {
     return {
@@ -38,7 +32,7 @@ export default async function NoticeDetailPage({
   params,
 }: NoticeDetailPageProps) {
   const { slug } = await params;
-  const notice = getNoticeBySlug(slug);
+  const notice = await getNoticeBySlug(slug);
 
   if (!notice) {
     notFound();

@@ -9,8 +9,8 @@ export const metadata: Metadata = {
   description: "DotG 게임창작부에서 진행하는 프로젝트를 소개합니다.",
 };
 
-export default function ProjectsPage() {
-  const projects = getAllProjects();
+export default async function ProjectsPage() {
+  const projects = await getAllProjects();
 
   return (
     <Container className="space-y-10 py-16">

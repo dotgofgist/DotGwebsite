@@ -2,13 +2,41 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "./database.types";
 import { getSupabasePublicEnv } from "./env";
+import { createAdminLoginPath } from "@/features/auth/redirects";
+
+function isProtectedAdminPath(pathname: string): boolean {
+  return (
+    pathname === "/admin" ||
+    (pathname.startsWith("/admin/") &&
+      pathname !== "/admin/login" &&
+      pathname !== "/admin/unauthorized")
+  );
+}
+
+function redirectToLogin(request: NextRequest, reason?: string): NextResponse {
+  const safeLoginPath = createAdminLoginPath(
+    `${request.nextUrl.pathname}${request.nextUrl.search}`,
+  );
+  const safeLoginUrl = new URL(safeLoginPath, request.url);
+
+  if (reason) {
+    safeLoginUrl.searchParams.set("reason", reason);
+  }
+
+  return NextResponse.redirect(safeLoginUrl);
+}
 
 export async function updateSession(
   request: NextRequest,
 ): Promise<NextResponse> {
   const env = getSupabasePublicEnv();
+  const protectedAdminPath = isProtectedAdminPath(request.nextUrl.pathname);
 
   if (!env) {
+    if (protectedAdminPath) {
+      return redirectToLogin(request, "not-configured");
+    }
+
     return NextResponse.next({
       request,
     });
@@ -39,7 +67,11 @@ export async function updateSession(
     },
   });
 
-  await supabase.auth.getClaims();
+  const { data, error } = await supabase.auth.getClaims();
+
+  if (protectedAdminPath && (error || !data?.claims.sub)) {
+    return redirectToLogin(request);
+  }
 
   return response;
 }

@@ -9,8 +9,8 @@ export const metadata: Metadata = {
   description: "DotG 게임창작부의 주요 소식과 안내를 확인합니다.",
 };
 
-export default function NoticesPage() {
-  const notices = getAllNotices();
+export default async function NoticesPage() {
+  const notices = await getAllNotices();
 
   return (
     <Container className="space-y-10 py-16">
