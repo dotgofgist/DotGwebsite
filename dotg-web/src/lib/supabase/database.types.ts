@@ -370,7 +370,9 @@ export type Database = {
         Row: {
           created_at: string
           description: string
+          hero_image_path: string | null
           id: number
+          logo_path: string | null
           name: string
           short_description: string
           title: string
@@ -380,7 +382,9 @@ export type Database = {
         Insert: {
           created_at?: string
           description: string
+          hero_image_path?: string | null
           id?: number
+          logo_path?: string | null
           name: string
           short_description: string
           title: string
@@ -390,7 +394,9 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string
+          hero_image_path?: string | null
           id?: number
+          logo_path?: string | null
           name?: string
           short_description?: string
           title?: string

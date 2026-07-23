@@ -21,7 +21,7 @@ export async function getAdminSiteSettings(): Promise<
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("site_settings")
-    .select("id, name, title, description, short_description, updated_by, created_at, updated_at")
+    .select("id, name, title, description, short_description, logo_path, hero_image_path, updated_by, created_at, updated_at")
     .eq("id", 1)
     .maybeSingle();
 

@@ -3,6 +3,8 @@ export type SiteSettings = {
   title: string;
   description: string;
   shortDescription: string;
+  logoUrl?: string;
+  heroImageUrl?: string;
 };
 
 export type ContactItem = {
@@ -21,6 +23,8 @@ export type SocialLink = {
 
 export type AdminSiteSettings = SiteSettings & {
   id: number;
+  logoPath?: string;
+  heroImagePath?: string;
   createdAt: string;
   updatedAt: string;
 };

@@ -31,6 +31,7 @@ function mapLinks(rows: ProjectLinkRow[] | undefined): ProjectLink[] {
 
 export function mapProjectRowToAdminProject(
   row: AdminProjectRowWithRelations,
+  thumbnailUrl?: string,
 ): AdminProject {
   return {
     id: row.id,
@@ -38,7 +39,7 @@ export function mapProjectRowToAdminProject(
     title: row.title,
     summary: row.summary,
     description: row.description,
-    thumbnailUrl: undefined,
+    thumbnailUrl,
     thumbnailPath: row.thumbnail_path ?? undefined,
     status: row.status,
     publicationStatus: row.publication_status,

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { buttonClasses } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -17,7 +18,7 @@ export async function HeroSection() {
             <h1 className="max-w-3xl text-4xl font-semibold tracking-normal sm:text-5xl lg:text-6xl">
               게임을 만들고
               <br />
-              경험을 함께 쌓습니다.
+              경험을 함께 나눕니다.
             </h1>
             <p className="max-w-2xl text-base leading-8 text-neutral-600 dark:text-neutral-300">
               {siteSettings.description}
@@ -36,21 +37,38 @@ export async function HeroSection() {
           </div>
         </div>
 
-        <div
-          aria-hidden="true"
-          className="relative min-h-72 rounded-lg border border-border bg-surface p-5"
-        >
-          <div className="grid h-full min-h-60 grid-cols-4 gap-3">
-            <div className="rounded-md border border-border bg-background" />
-            <div className="col-span-2 rounded-md border border-border bg-primary/15" />
-            <div className="rounded-md border border-border bg-background" />
-            <div className="col-span-2 rounded-md border border-border bg-background" />
-            <div className="rounded-md border border-border bg-primary/25" />
-            <div className="rounded-md border border-border bg-background" />
-            <div className="rounded-md border border-border bg-primary/20" />
-            <div className="col-span-3 rounded-md border border-border bg-background" />
+        {siteSettings.heroImageUrl ? (
+          <div
+            aria-hidden="true"
+            className="relative min-h-72 overflow-hidden rounded-lg border border-border bg-surface"
+          >
+            <Image
+              alt=""
+              aria-hidden="true"
+              className="h-full w-full object-cover"
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 48vw"
+              src={siteSettings.heroImageUrl}
+            />
           </div>
-        </div>
+        ) : (
+          <div
+            aria-hidden="true"
+            className="relative min-h-72 rounded-lg border border-border bg-surface p-5"
+          >
+            <div className="grid h-full min-h-60 grid-cols-4 gap-3">
+              <div className="rounded-md border border-border bg-background" />
+              <div className="col-span-2 rounded-md border border-border bg-primary/15" />
+              <div className="rounded-md border border-border bg-background" />
+              <div className="col-span-2 rounded-md border border-border bg-background" />
+              <div className="rounded-md border border-border bg-primary/25" />
+              <div className="rounded-md border border-border bg-background" />
+              <div className="rounded-md border border-border bg-primary/20" />
+              <div className="col-span-3 rounded-md border border-border bg-background" />
+            </div>
+          </div>
+        )}
       </Container>
     </section>
   );

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { AdminPageHeader } from "@/components/shared/admin-page-header";
 import { getAdminProjectById } from "@/features/projects/admin-queries";
 import { ProjectForm } from "@/features/projects/components/project-form";
+import { ProjectThumbnailForm } from "@/features/projects/components/project-thumbnail-form";
 
 type EditProjectPageProps = {
   params: Promise<{
@@ -30,6 +31,7 @@ export default async function EditProjectPage({
         description={`"${project.title}" 프로젝트를 수정합니다.`}
         title="프로젝트 수정"
       />
+      <ProjectThumbnailForm project={project} />
       <ProjectForm initialProject={project} mode="edit" />
     </div>
   );

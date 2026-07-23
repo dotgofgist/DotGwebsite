@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { requireContentManager } from "@/features/auth/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/supabase/database.types";
+import { PROJECT_IMAGES_BUCKET } from "@/lib/supabase/storage-constants";
 import type { ProjectActionState, ProjectFormValues } from "./validation";
 import { validateProjectFormData } from "./validation";
 
@@ -229,10 +230,26 @@ export async function deleteProjectAction(formData: FormData): Promise<never> {
   }
 
   const supabase = await createServerSupabaseClient();
+  const existing = await supabase
+    .from("projects")
+    .select("id, thumbnail_path")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (existing.error) {
+    redirect(`/admin/projects/${id}/edit?error=delete`);
+  }
+
   const { error } = await supabase.from("projects").delete().eq("id", id);
 
   if (error) {
     redirect(`/admin/projects/${id}/edit?error=delete`);
+  }
+
+  if (existing.data?.thumbnail_path) {
+    await supabase.storage
+      .from(PROJECT_IMAGES_BUCKET)
+      .remove([existing.data.thumbnail_path]);
   }
 
   void manager;

@@ -1,4 +1,6 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getPublicStorageUrl } from "@/lib/supabase/storage";
+import { PROJECT_IMAGES_BUCKET } from "@/lib/supabase/storage-constants";
 import { requireContentManager } from "@/features/auth/server";
 import {
   mapProjectRowToAdminProject,
@@ -72,7 +74,12 @@ export async function getAllAdminProjects(): Promise<AdminProject[]> {
     throw new Error("관리자 프로젝트 목록을 불러오지 못했습니다.");
   }
 
-  return data.map((row) => mapProjectRowToAdminProject(row));
+  return data.map((row) =>
+    mapProjectRowToAdminProject(
+      row,
+      getPublicStorageUrl(supabase, PROJECT_IMAGES_BUCKET, row.thumbnail_path),
+    ),
+  );
 }
 
 export async function getAdminProjectById(
@@ -96,7 +103,10 @@ export async function getAdminProjectById(
   }
 
   return data
-    ? mapProjectRowToAdminProject(data as AdminProjectRowWithRelations)
+    ? mapProjectRowToAdminProject(
+        data as AdminProjectRowWithRelations,
+        getPublicStorageUrl(supabase, PROJECT_IMAGES_BUCKET, data.thumbnail_path),
+      )
     : undefined;
 }
 

@@ -13,7 +13,7 @@ This schema stores DotG P0 public content and the database-backed administrator 
 | `notices` | Notice posts | `slug`, `title`, `summary`, `content`, `pinned`, `publication_status`, `published_at` | `publication_status = 'published'` | `editor`, `admin` | `Notice`; DB adds publication/audit fields |
 | `recruitments` | Recruitment campaign | `title`, `summary`, `status`, `is_current`, `target`, `qualifications`, `activities`, `application_url` | `publication_status = 'published'` | `editor`, `admin` | `Recruitment`; DB flattens `schedule` and `contact` |
 | `recruitment_steps` | Ordered recruitment process | `recruitment_id`, `title`, `description`, `sort_order` | Parent recruitment must be published | `editor`, `admin` | `Recruitment.process` |
-| `site_settings` | Singleton global site information | `id = 1`, `name`, `title`, `description`, `short_description` | Public | `editor`, `admin` | `siteConfig`; hero fields omitted because config has no current hero fields |
+| `site_settings` | Singleton global site information | `id = 1`, `name`, `title`, `description`, `short_description`, `logo_path`, `hero_image_path` | Public | `editor`, `admin` | `siteConfig`; image paths are converted to Supabase public URLs at query time |
 | `contact_items` | Contact display items | `label`, `value`, `href`, `description`, `is_active`, `sort_order` | `is_active = true` | `editor`, `admin` | `contactItems` |
 | `social_links` | Social platform display items | `platform`, `label`, `url`, `description`, `is_active`, `sort_order` | `is_active = true and url is not null` | `editor`, `admin` | `socialLinks`; DB keeps missing URLs as `null` |
 
@@ -58,6 +58,5 @@ The seed mirrors counts, slugs, status values, dates, ordering, member/link shap
 
 - Keep public pages on Supabase queries while expanding settings, contact, and SNS data.
 - Recruitment management uses `create_recruitment`, `save_recruitment`, `set_current_recruitment`, and `unset_current_recruitment` RPCs for atomic step saves and current recruitment changes.
-- Implement admin CRUD for settings.
-- Add Storage buckets and image upload flows.
+- Storage image management uses public `project-images` and `site-assets` buckets with object paths stored in Postgres. See `docs/storage-management.md`.
 - Link and deploy to the production Supabase project.

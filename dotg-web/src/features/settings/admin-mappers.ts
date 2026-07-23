@@ -29,6 +29,8 @@ export function mapSiteSettingsRowToAdminSettings(
   return {
     ...mapSiteSettingsRowToSettings(row),
     id: row.id,
+    logoPath: row.logo_path ?? undefined,
+    heroImagePath: row.hero_image_path ?? undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
