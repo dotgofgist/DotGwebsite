@@ -1,22 +1,14 @@
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 import { buttonClasses } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
-
-const latestNotices = [
-  {
-    title: "웹사이트 준비 안내",
-    description: "프로젝트와 모집 정보를 순차적으로 업데이트할 예정입니다.",
-    status: "준비 중",
-  },
-  {
-    title: "공지사항 영역 준비",
-    description: "동아리 소식과 안내는 공지사항 페이지에서 확인할 수 있습니다.",
-    status: "예정",
-  },
-];
+import { getLatestNotices } from "@/features/notices/queries";
+import { formatDate } from "@/lib/utils/date";
 
 export function LatestNoticesSection() {
+  const latestNotices = getLatestNotices(3);
+
   return (
     <section className="bg-surface py-16">
       <Container className="space-y-8">
@@ -27,7 +19,7 @@ export function LatestNoticesSection() {
               최신 안내 미리보기
             </h2>
             <p className="text-sm leading-7 text-neutral-600 dark:text-neutral-300">
-              일정이 확정되지 않은 내용은 임의 날짜 없이 상태만 표시합니다.
+              공지사항 데이터에서 최근 안내를 가져와 표시합니다.
             </p>
           </div>
           <Link
@@ -42,15 +34,29 @@ export function LatestNoticesSection() {
           {latestNotices.map((notice) => (
             <Card key={notice.title} className="bg-background">
               <CardHeader>
-                <p className="text-sm font-semibold text-primary">
-                  {notice.status}
-                </p>
+                <div className="flex flex-wrap items-center gap-3">
+                  {notice.pinned ? <Badge tone="primary">고정</Badge> : null}
+                  {formatDate(notice.publishedAt) ? (
+                    <time
+                      className="text-sm text-neutral-500"
+                      dateTime={notice.publishedAt}
+                    >
+                      {formatDate(notice.publishedAt)}
+                    </time>
+                  ) : null}
+                </div>
                 <CardTitle className="text-lg">{notice.title}</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-5">
                 <p className="text-sm leading-6 text-neutral-600 dark:text-neutral-300">
-                  {notice.description}
+                  {notice.summary}
                 </p>
+                <Link
+                  className={buttonClasses({ variant: "secondary" })}
+                  href={`/notices/${notice.slug}`}
+                >
+                  {notice.title} 읽기
+                </Link>
               </CardContent>
             </Card>
           ))}

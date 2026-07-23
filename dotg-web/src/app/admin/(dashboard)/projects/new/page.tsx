@@ -1,13 +1,21 @@
-import { Container } from "@/components/ui/container";
-import { SectionHeading } from "@/components/ui/section-heading";
+import type { Metadata } from "next";
+import { AdminPageHeader } from "@/components/shared/admin-page-header";
+import { AdminPlaceholderNotice } from "@/components/shared/admin-placeholder-notice";
+import { ProjectForm } from "@/features/projects/components/project-form";
+
+export const metadata: Metadata = {
+  title: "새 프로젝트",
+};
 
 export default function NewProjectPage() {
   return (
-    <Container className="py-16">
-      <SectionHeading
-        title="프로젝트 작성"
-        description="새 프로젝트 입력 폼과 저장 액션은 이후 단계에서 구현합니다."
+    <div className="space-y-8">
+      <AdminPageHeader
+        title="새 프로젝트"
+        description="새 프로젝트 등록 UI입니다. 입력 내용은 아직 저장되지 않습니다."
       />
-    </Container>
+      <AdminPlaceholderNotice />
+      <ProjectForm />
+    </div>
   );
 }

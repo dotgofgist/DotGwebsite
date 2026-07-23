@@ -1,5 +1,7 @@
-import { Container } from "@/components/ui/container";
-import { SectionHeading } from "@/components/ui/section-heading";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { NoticeDetail } from "@/features/notices/components/notice-detail";
+import { getAllNotices, getNoticeBySlug } from "@/features/notices/queries";
 
 type NoticeDetailPageProps = {
   params: Promise<{
@@ -7,17 +9,40 @@ type NoticeDetailPageProps = {
   }>;
 };
 
+export function generateStaticParams() {
+  return getAllNotices().map((notice) => ({
+    slug: notice.slug,
+  }));
+}
+
+export async function generateMetadata({
+  params,
+}: NoticeDetailPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const notice = getNoticeBySlug(slug);
+
+  if (!notice) {
+    return {
+      title: "공지사항을 찾을 수 없습니다",
+      description: "요청한 공지사항이 존재하지 않습니다.",
+    };
+  }
+
+  return {
+    title: notice.title,
+    description: notice.summary,
+  };
+}
+
 export default async function NoticeDetailPage({
   params,
 }: NoticeDetailPageProps) {
   const { slug } = await params;
+  const notice = getNoticeBySlug(slug);
 
-  return (
-    <Container className="py-16">
-      <SectionHeading
-        title="공지사항 상세"
-        description={`공지사항 slug "${slug}"에 해당하는 상세 콘텐츠는 이후 단계에서 구현합니다.`}
-      />
-    </Container>
-  );
+  if (!notice) {
+    notFound();
+  }
+
+  return <NoticeDetail notice={notice} />;
 }

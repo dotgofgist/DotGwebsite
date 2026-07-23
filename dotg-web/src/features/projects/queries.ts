@@ -1,6 +1,7 @@
 import { projects } from "./mock-data";
 import type { Project, ProjectStatus } from "./types";
 
+// TODO: Supabase 스키마 및 Repository 구현 후 mock data를 실제 조회로 교체
 const statusOrder: Record<ProjectStatus, number> = {
   developing: 1,
   planning: 2,
