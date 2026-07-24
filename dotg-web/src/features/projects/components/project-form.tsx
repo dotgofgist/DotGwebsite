@@ -40,6 +40,7 @@ export function ProjectForm({ initialProject, mode }: ProjectFormProps) {
   return (
     <form action={formAction} className="grid gap-6 rounded-lg border border-border bg-surface p-6">
       {initialProject ? <input name="id" type="hidden" value={initialProject.id} /> : null}
+      {initialProject ? <input name="updatedAt" type="hidden" value={initialProject.updatedAt} /> : null}
       {state.message ? (
         <p className="rounded-md border border-border bg-background p-3 text-sm text-red-600" role="alert">
           {state.message}

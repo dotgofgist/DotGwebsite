@@ -38,7 +38,7 @@ Allowed link types are `github`, `website`, `download`, `youtube`, `steam`, and 
 
 ## Slugs
 
-Slugs must use lowercase English letters, numbers, and hyphens:
+Slugs are normalized to lowercase and must use English letters, numbers, and single hyphens:
 
 ```text
 project-aurora
@@ -51,6 +51,15 @@ signal-lost
 - `created_by` and `updated_by` come from the authenticated server session.
 - Service Role keys are not used.
 - RLS remains the final database boundary.
+- Edit saves include the row's previous `updated_at` value. If another admin saved first, the stale update is rejected and the user is asked to refresh.
+
+## Data Integrity
+
+- Published projects require `published_at`.
+- Sort orders are non-negative.
+- Project links must use `http` or `https`.
+- Member `name + role` pairs are unique per project after trim/case normalization.
+- Tags, members, and links are trimmed and de-duplicated in server validation before mutation.
 
 ## Cache Revalidation
 

@@ -11,8 +11,8 @@ export function ProjectSubmitButton({ label }: ProjectSubmitButtonProps) {
   const { pending } = useFormStatus();
 
   return (
-    <Button disabled={pending} type="submit">
-      {pending ? "저장 중" : label}
+    <Button aria-disabled={pending} disabled={pending} type="submit">
+      {pending ? "Saving..." : label}
     </Button>
   );
 }

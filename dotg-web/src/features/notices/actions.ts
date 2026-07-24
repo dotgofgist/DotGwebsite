@@ -96,7 +96,7 @@ export async function updateNoticeAction(
 
   const existing = await supabase
     .from("notices")
-    .select("id, slug, published_at")
+    .select("id, slug, published_at, updated_at")
     .eq("id", id)
     .maybeSingle();
 
@@ -118,8 +118,9 @@ export async function updateNoticeAction(
       ) satisfies NoticeUpdate,
     )
     .eq("id", id)
+    .eq("updated_at", validation.values.updatedAt ?? "")
     .select("id, slug")
-    .single();
+    .maybeSingle();
 
   if (error) {
     return {
@@ -129,6 +130,13 @@ export async function updateNoticeAction(
           ? "이미 사용 중인 slug입니다."
           : "공지사항을 저장하지 못했습니다.",
       fieldErrors: error.code === "23505" ? { slug: "이미 사용 중인 slug입니다." } : undefined,
+    };
+  }
+
+  if (!data) {
+    return {
+      status: "error",
+      message: "Another admin saved this notice first. Refresh and try again.",
     };
   }
 

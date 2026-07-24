@@ -9,6 +9,7 @@ export type NoticeActionState = {
     summary?: string;
     content?: string;
     publicationStatus?: string;
+    updatedAt?: string;
   };
 };
 
@@ -20,6 +21,7 @@ export type NoticeFormValues = {
   content: string;
   pinned: boolean;
   publicationStatus: ContentStatus;
+  updatedAt?: string;
 };
 
 const contentStatuses = new Set<ContentStatus>([
@@ -33,7 +35,6 @@ const uuidPattern =
 
 function readString(formData: FormData, name: string): string {
   const value = formData.get(name);
-
   return typeof value === "string" ? value : "";
 }
 
@@ -42,33 +43,24 @@ export function validateNoticeFormData(formData: FormData):
   | { ok: false; state: NoticeActionState } {
   const id = readString(formData, "id").trim();
   const title = readString(formData, "title").trim();
-  const slug = readString(formData, "slug").trim();
+  const slug = readString(formData, "slug").trim().toLowerCase();
   const summary = readString(formData, "summary").trim();
   const content = readString(formData, "content").trim();
-  const publicationStatus = readString(
-    formData,
-    "publicationStatus",
-  ) as ContentStatus;
+  const publicationStatus = readString(formData, "publicationStatus") as ContentStatus;
   const pinned = formData.get("pinned") === "on";
+  const updatedAt = readString(formData, "updatedAt").trim();
   const fieldErrors: NonNullable<NoticeActionState["fieldErrors"]> = {};
 
-  if (id && !uuidPattern.test(id)) {
-    fieldErrors.slug = "공지사항 id가 올바르지 않습니다.";
-  }
-  if (!title || title.length > 150) {
-    fieldErrors.title = "제목은 1~150자로 입력해 주세요.";
-  }
+  if (id && !uuidPattern.test(id)) fieldErrors.slug = "Invalid notice id.";
+  if (id && !updatedAt) fieldErrors.updatedAt = "Refresh this notice before saving again.";
+  if (!title || title.length > 150) fieldErrors.title = "Title must be 1-150 characters.";
   if (!slugPattern.test(slug) || slug.length > 120) {
-    fieldErrors.slug = "slug는 영문 소문자, 숫자, 하이픈만 사용할 수 있습니다.";
+    fieldErrors.slug = "Slug must use lowercase letters, numbers, and single hyphens.";
   }
-  if (!summary || summary.length > 300) {
-    fieldErrors.summary = "요약은 1~300자로 입력해 주세요.";
-  }
-  if (!content || content.length > 10000) {
-    fieldErrors.content = "본문은 1~10000자로 입력해 주세요.";
-  }
+  if (!summary || summary.length > 300) fieldErrors.summary = "Summary must be 1-300 characters.";
+  if (!content || content.length > 10000) fieldErrors.content = "Content must be 1-10000 characters.";
   if (!contentStatuses.has(publicationStatus)) {
-    fieldErrors.publicationStatus = "공개 상태를 확인해 주세요.";
+    fieldErrors.publicationStatus = "Choose a valid publication status.";
   }
 
   if (Object.keys(fieldErrors).length > 0) {
@@ -76,7 +68,7 @@ export function validateNoticeFormData(formData: FormData):
       ok: false,
       state: {
         status: "error",
-        message: "입력한 공지사항 정보를 확인해 주세요.",
+        message: "Check the notice form fields.",
         fieldErrors,
       },
     };
@@ -92,6 +84,7 @@ export function validateNoticeFormData(formData: FormData):
       content,
       pinned,
       publicationStatus,
+      updatedAt: updatedAt || undefined,
     },
   };
 }

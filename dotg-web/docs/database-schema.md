@@ -27,7 +27,9 @@ erDiagram
   RECRUITMENTS ||--o{ RECRUITMENT_STEPS : has
 ```
 
-Foreign keys use `on delete cascade` for dependent content rows and `on delete set null` for audit columns. `site_settings` uses `id smallint primary key default 1 check (id = 1)` so only one row can exist. `recruitments_one_current_key` allows at most one row where `is_current = true`.
+Foreign keys use `on delete cascade` for dependent content rows and `on delete set null` for audit columns. `site_settings` uses `id smallint primary key default 1 check (id = 1)` plus a delete guard trigger so only the singleton row can exist and it cannot be removed through ordinary deletes. `recruitments_one_current_key` allows at most one row where `is_current = true`, and `recruitments_current_requires_published_check` requires that row to be published.
+
+Additional integrity checks enforce published content timestamps, non-negative sort orders, safe URL protocols, notice text length limits, and duplicate project member prevention.
 
 ## Enums
 

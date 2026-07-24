@@ -34,7 +34,12 @@ export function FormField({
         </p>
       ) : null}
       {error ? (
-        <p className="text-xs leading-5 text-red-600" id={errorId}>
+        <p
+          aria-live="polite"
+          className="text-xs leading-5 text-red-600"
+          id={errorId}
+          role="alert"
+        >
           {error}
         </p>
       ) : null}

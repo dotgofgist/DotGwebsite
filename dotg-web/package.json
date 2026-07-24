@@ -11,6 +11,7 @@
     "lint": "eslint",
     "test:env": "node --experimental-strip-types --test tests/env-policy.test.mts",
     "test:auth": "node --experimental-strip-types --test tests/auth-policy.test.mts",
+    "test:admin": "node --experimental-strip-types --test tests/admin-validation.test.mts",
     "test:storage": "node --experimental-strip-types --test tests/storage-integrity.test.mts",
     "test:supabase": "node --experimental-strip-types --test tests/supabase-deployment.test.mts",
     "env:check": "node --experimental-strip-types scripts/check-env.mts",

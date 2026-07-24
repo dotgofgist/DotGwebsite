@@ -15,8 +15,8 @@ import {
   validateSocialLinkFormData,
 } from "./validation";
 
-type SiteSettingsUpsert =
-  Database["public"]["Tables"]["site_settings"]["Insert"];
+type SiteSettingsUpdate =
+  Database["public"]["Tables"]["site_settings"]["Update"];
 type ContactItemInsert =
   Database["public"]["Tables"]["contact_items"]["Insert"];
 type ContactItemUpdate =
@@ -51,13 +51,24 @@ export async function updateSiteSettingsAction(
     description: validation.values.description,
     short_description: validation.values.shortDescription,
     updated_by: manager.id,
-  } satisfies SiteSettingsUpsert;
-  const { error } = await supabase
+  } satisfies SiteSettingsUpdate;
+  const save = await supabase
     .from("site_settings")
-    .upsert(payload, { onConflict: "id" });
+    .update(payload)
+    .eq("id", 1)
+    .eq("updated_at", validation.values.updatedAt ?? "")
+    .select("id")
+    .maybeSingle();
 
-  if (error) {
-    return { status: "error", message: "사이트 설정을 저장하지 못했습니다." };
+  if (save.error) {
+    return { status: "error", message: "Could not save site settings." };
+  }
+
+  if (!save.data) {
+    return {
+      status: "error",
+      message: "Another admin saved site settings first. Refresh and try again.",
+    };
   }
 
   revalidateSettingsPaths();
@@ -89,7 +100,7 @@ export async function createContactItemAction(
     .single();
 
   if (error) {
-    return { status: "error", message: "연락처를 생성하지 못했습니다." };
+    return { status: "error", message: "Could not create contact item." };
   }
 
   revalidateSettingsPaths();
@@ -106,7 +117,7 @@ export async function updateContactItemAction(
   if (!validation.ok) return validation.state;
 
   if (!validation.values.id) {
-    return { status: "error", message: "연락처 id가 없습니다." };
+    return { status: "error", message: "Contact item id is missing." };
   }
 
   const supabase = await createServerSupabaseClient();
@@ -124,7 +135,7 @@ export async function updateContactItemAction(
     .eq("id", validation.values.id);
 
   if (error) {
-    return { status: "error", message: "연락처를 저장하지 못했습니다." };
+    return { status: "error", message: "Could not save contact item." };
   }
 
   revalidateSettingsPaths();
@@ -175,7 +186,7 @@ export async function createSocialLinkAction(
     .single();
 
   if (error) {
-    return { status: "error", message: "SNS 링크를 생성하지 못했습니다." };
+    return { status: "error", message: "Could not create social link." };
   }
 
   revalidateSettingsPaths();
@@ -192,7 +203,7 @@ export async function updateSocialLinkAction(
   if (!validation.ok) return validation.state;
 
   if (!validation.values.id) {
-    return { status: "error", message: "SNS 링크 id가 없습니다." };
+    return { status: "error", message: "Social link id is missing." };
   }
 
   const supabase = await createServerSupabaseClient();
@@ -210,7 +221,7 @@ export async function updateSocialLinkAction(
     .eq("id", validation.values.id);
 
   if (error) {
-    return { status: "error", message: "SNS 링크를 저장하지 못했습니다." };
+    return { status: "error", message: "Could not save social link." };
   }
 
   revalidateSettingsPaths();

@@ -181,7 +181,7 @@ export async function updateProjectAction(
 
   const existing = await supabase
     .from("projects")
-    .select("id, slug, published_at")
+    .select("id, slug, published_at, updated_at")
     .eq("id", id)
     .maybeSingle();
 
@@ -203,8 +203,9 @@ export async function updateProjectAction(
       ) satisfies ProjectUpdate,
     )
     .eq("id", id)
+    .eq("updated_at", validation.values.updatedAt ?? "")
     .select("id, slug")
-    .single();
+    .maybeSingle();
 
   if (error) {
     return {
@@ -214,6 +215,13 @@ export async function updateProjectAction(
           ? "이미 사용 중인 slug입니다."
           : "프로젝트를 저장하지 못했습니다.",
       fieldErrors: error.code === "23505" ? { slug: "이미 사용 중인 slug입니다." } : undefined,
+    };
+  }
+
+  if (!data) {
+    return {
+      status: "error",
+      message: "Another admin saved this project first. Refresh and try again.",
     };
   }
 

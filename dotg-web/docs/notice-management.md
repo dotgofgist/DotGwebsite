@@ -23,7 +23,7 @@ NoticeForm
 
 ## Slugs
 
-Slugs must use lowercase English letters, numbers, and hyphens:
+Slugs are normalized to lowercase and must use English letters, numbers, and single hyphens:
 
 ```text
 website-operation-guide
@@ -45,6 +45,12 @@ New notices default to `draft`. When a notice is first published, `published_at`
 ## Pinned Notices
 
 Multiple notices can be pinned. Pinned state is display metadata and is not constrained to a single row.
+
+## Data Integrity
+
+- Published notices require `published_at`.
+- Title, summary, and content length limits are enforced in server validation and database checks.
+- Edit saves include the row's previous `updated_at` value. If another admin saved first, the stale update is rejected and the user is asked to refresh.
 
 ## Security
 

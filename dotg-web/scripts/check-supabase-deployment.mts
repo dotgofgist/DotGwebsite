@@ -7,6 +7,7 @@ const requiredMigrations = [
   "20260723073320_add_initial_rls_policies.sql",
   "20260723090000_add_recruitment_write_functions.sql",
   "20260724090000_add_public_image_storage.sql",
+  "20260724120000_harden_admin_data_integrity.sql",
 ];
 const requiredTables = [
   "profiles",
@@ -80,6 +81,7 @@ const initialSchema = readMigration(requiredMigrations[0]);
 const rlsMigration = readMigration(requiredMigrations[1]);
 const recruitmentRpcMigration = readMigration(requiredMigrations[2]);
 const storageMigration = readMigration(requiredMigrations[3]);
+const integrityMigration = readMigration(requiredMigrations[4]);
 
 includesAll(initialSchema, ["handle_new_user", "on_auth_user_created"], "profile auto-creation trigger");
 includesAll(
@@ -107,6 +109,16 @@ includesAll(
     "content managers delete public image assets",
   ],
   "storage policies",
+);
+includesAll(
+  integrityMigration,
+  [
+    "projects_published_at_required_check",
+    "notices_published_at_required_check",
+    "recruitments_current_requires_published_check",
+    "prevent_site_settings_delete",
+  ],
+  "admin data integrity constraints",
 );
 
 const developmentSeed = readFileSync("supabase/seed.sql", "utf8");

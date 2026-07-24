@@ -17,6 +17,7 @@ describe("Supabase deployment assets", () => {
       "20260723073320_add_initial_rls_policies.sql",
       "20260723090000_add_recruitment_write_functions.sql",
       "20260724090000_add_public_image_storage.sql",
+      "20260724120000_harden_admin_data_integrity.sql",
     ]);
 
     const sql = migrationNames

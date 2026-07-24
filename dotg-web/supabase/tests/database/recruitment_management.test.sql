@@ -1,6 +1,6 @@
 begin;
 
-select plan(22);
+select plan(23);
 
 select ok(to_regprocedure('public.create_recruitment(text,text,public.recruitment_status,public.content_status,text[],text[],text[],text,text,text,text,text,text,text,jsonb)') is not null, 'create recruitment RPC exists');
 select ok(to_regprocedure('public.save_recruitment(uuid,text,text,public.recruitment_status,public.content_status,text[],text[],text[],text,text,text,text,text,text,text,jsonb)') is not null, 'save recruitment RPC exists');
@@ -133,6 +133,17 @@ reset role;
 set local role authenticated;
 select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000001', true);
 select set_config('request.jwt.claim.role', 'authenticated', true);
+
+select throws_ok(
+  $$ update public.recruitments
+     set publication_status = 'draft'
+     where id = (select id from recruitment_test_ids) $$,
+  '23514',
+  'new row for relation "recruitments" violates check constraint "recruitments_current_requires_published_check"',
+  'current recruitment cannot be changed to draft directly'
+);
+
+select public.unset_current_recruitment((select id from recruitment_test_ids));
 
 update public.recruitments
 set publication_status = 'draft'

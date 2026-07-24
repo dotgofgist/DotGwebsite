@@ -6,6 +6,8 @@ This phase connects text-based site settings, contact items, and SNS links to Su
 
 `site_settings` is a singleton table. The admin form never accepts an id from the user; saves always upsert `id = 1`.
 
+The database enforces `id = 1` and blocks deleting the singleton row. Admin text saves include the previous `updated_at` value, so stale saves from another open browser tab are rejected with a refresh-and-retry message.
+
 If Supabase is not fully configured in local development, public pages use `src/config/site.ts` as fallback data and log a warning. Preview, Production, and production-like builds do not use this fallback. If Supabase is configured but the singleton row is missing, public pages raise an error instead of showing config fallback data. A Supabase query error is also treated as an error and is not hidden by fallback data.
 
 The managed fields are:

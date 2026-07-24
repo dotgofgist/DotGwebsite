@@ -6,6 +6,7 @@ export type SiteSettingsActionState = {
     title?: string;
     description?: string;
     shortDescription?: string;
+    updatedAt?: string;
   };
 };
 
@@ -38,6 +39,7 @@ export type SiteSettingsFormValues = {
   title: string;
   description: string;
   shortDescription: string;
+  updatedAt?: string;
 };
 
 export type ContactItemFormValues = {
@@ -106,8 +108,12 @@ export function validateSiteSettingsFormData(formData: FormData):
   const title = readString(formData, "title").trim();
   const description = readString(formData, "description").trim();
   const shortDescription = readString(formData, "shortDescription").trim();
+  const updatedAt = readString(formData, "updatedAt").trim();
   const fieldErrors: NonNullable<SiteSettingsActionState["fieldErrors"]> = {};
 
+  if (!updatedAt) {
+    fieldErrors.updatedAt = "Refresh site settings before saving again.";
+  }
   if (!name || name.length > 80 || !isPlainText(name)) {
     fieldErrors.name = "사이트 이름은 1~80자의 일반 텍스트로 입력해 주세요.";
   }
@@ -136,7 +142,7 @@ export function validateSiteSettingsFormData(formData: FormData):
     };
   }
 
-  return { ok: true, values: { name, title, description, shortDescription } };
+  return { ok: true, values: { name, title, description, shortDescription, updatedAt } };
 }
 
 export function validateContactItemFormData(formData: FormData):

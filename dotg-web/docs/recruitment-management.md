@@ -27,14 +27,14 @@ Recruitment status values are `upcoming`, `open`, `closed`, and `always`. Public
 
 ## Current Policy
 
-Only one recruitment may have `is_current = true`. The partial unique index is the final database guard. Admins can mark a `draft` or `published` recruitment as current, but only `published + current` appears publicly. `archived` recruitments cannot be current.
+Only one recruitment may have `is_current = true`. The partial unique index is the final database guard. Only `published` recruitments can be current; draft and archived rows are blocked by database constraints and by `set_current_recruitment`.
 
 Current management uses:
 
 - `set_current_recruitment(id)`: clears any previous current row and marks the target current
 - `unset_current_recruitment(id)`: clears current on the target row
 
-If a uniqueness conflict occurs, the UI reports a retryable current selection failure.
+If a uniqueness or status conflict occurs, the UI reports a retryable current selection failure.
 
 ## Archive Policy
 
@@ -43,6 +43,8 @@ Permanent deletion is intentionally not implemented in this phase. Archiving set
 ## Validation
 
 Server validation checks title, summary, recruitment status, publication status, target list, qualifications, activities, date order, application label, application URL, process rows, and contact fields. Application and contact links must use `http` or `https`.
+
+The database also rejects unsafe application/contact URL protocols. Existing RPC inputs still normalize blank URLs as empty strings in a few optional recruitment contact fields; a future RPC cleanup can convert those blanks to `null` without changing public behavior.
 
 Process input uses one line per step:
 

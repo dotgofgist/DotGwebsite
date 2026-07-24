@@ -5,12 +5,12 @@ import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { updateSiteSettingsAction } from "../actions";
-import type { SiteSettings } from "../types";
+import type { AdminSiteSettings } from "../types";
 import type { SiteSettingsActionState } from "../validation";
 import { SettingsSubmitButton } from "./settings-submit-button";
 
 type SiteSettingsFormProps = {
-  initialSettings: SiteSettings;
+  initialSettings: AdminSiteSettings;
 };
 
 const initialState: SiteSettingsActionState = {
@@ -26,6 +26,7 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
   return (
     <form action={formAction} className="grid gap-5 rounded-lg border border-border bg-surface p-6">
       <h2 className="text-xl font-semibold tracking-normal">사이트 기본 정보</h2>
+      <input name="updatedAt" type="hidden" value={initialSettings.updatedAt} />
       {state.message ? (
         <p className="rounded-md border border-border bg-background p-3 text-sm text-red-600" role="alert">
           {state.message}

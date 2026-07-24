@@ -12,7 +12,7 @@ export function RecruitmentSubmitButton({ label }: RecruitmentSubmitButtonProps)
 
   return (
     <Button aria-disabled={pending} disabled={pending} type="submit">
-      {pending ? "저장 중" : label}
+      {pending ? "Saving..." : label}
     </Button>
   );
 }

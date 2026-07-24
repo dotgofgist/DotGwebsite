@@ -27,6 +27,7 @@ export function NoticeForm({ initialNotice, mode }: NoticeFormProps) {
   return (
     <form action={formAction} className="grid gap-6 rounded-lg border border-border bg-surface p-6">
       {initialNotice ? <input name="id" type="hidden" value={initialNotice.id} /> : null}
+      {initialNotice ? <input name="updatedAt" type="hidden" value={initialNotice.updatedAt} /> : null}
       {state.message ? (
         <p className="rounded-md border border-border bg-background p-3 text-sm text-red-600" role="alert">
           {state.message}

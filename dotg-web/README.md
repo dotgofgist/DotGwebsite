@@ -34,6 +34,7 @@ pnpm exec tsc --noEmit
 pnpm build
 pnpm run test:env
 pnpm run test:auth
+pnpm run test:admin
 pnpm run test:storage
 pnpm run env:check
 pnpm run env:check:production
