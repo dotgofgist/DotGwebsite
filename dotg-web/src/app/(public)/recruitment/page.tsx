@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getCanonicalUrl } from "@/config/site-url";
 import { RecruitmentContact } from "@/features/recruitment/components/recruitment-contact";
 import { RecruitmentGuide } from "@/features/recruitment/components/recruitment-guide";
 import { RecruitmentOverview } from "@/features/recruitment/components/recruitment-overview";
@@ -7,6 +8,9 @@ import { RecruitmentSchedule } from "@/features/recruitment/components/recruitme
 import { getCurrentRecruitment } from "@/features/recruitment/queries";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: getCanonicalUrl("/recruitment"),
+  },
   title: "모집 안내",
   description: "DotG 게임창작부의 모집 일정과 지원 방법을 안내합니다.",
 };

@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getCanonicalUrl } from "@/config/site-url";
 import { ContactCard } from "@/components/shared/contact-card";
 import { SocialBanner } from "@/components/shared/social-banner";
 import { buttonClasses } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: getCanonicalUrl("/contact"),
+  },
   title: "연락처",
   description: "DotG의 문의 안내와 SNS 채널 정보를 확인합니다.",
 };

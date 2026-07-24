@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
+import { getCanonicalUrl } from "@/config/site-url";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ProjectGrid } from "@/features/projects/components/project-grid";
 import { getAllProjects } from "@/features/projects/queries";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: getCanonicalUrl("/projects"),
+  },
   title: "프로젝트",
   description: "DotG 게임창작부에서 진행하는 프로젝트를 소개합니다.",
 };

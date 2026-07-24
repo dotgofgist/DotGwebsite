@@ -14,6 +14,7 @@
 /coverage
 /test-results
 /playwright-report
+/blob-report
 /playwright/.auth
 /tests/e2e/.auth
 
@@ -37,6 +38,7 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 !.env.example
+!.env.ci.example
 
 # vercel
 .vercel

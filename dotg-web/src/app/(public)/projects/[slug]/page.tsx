@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getCanonicalUrl, getSiteMetadataBase } from "@/config/site-url";
 import { ProjectDetail } from "@/features/projects/components/project-detail";
 import { getProjectBySlug } from "@/features/projects/queries";
 
@@ -23,8 +24,25 @@ export async function generateMetadata({
   }
 
   return {
+    metadataBase: getSiteMetadataBase(),
     title: project.title,
     description: project.summary,
+    alternates: {
+      canonical: getCanonicalUrl(`/projects/${project.slug}`),
+    },
+    openGraph: {
+      title: project.title,
+      description: project.summary,
+      url: getCanonicalUrl(`/projects/${project.slug}`),
+      type: "article",
+      images: project.thumbnailUrl ? [project.thumbnailUrl] : ["/opengraph-image"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: project.title,
+      description: project.summary,
+      images: project.thumbnailUrl ? [project.thumbnailUrl] : ["/opengraph-image"],
+    },
   };
 }
 

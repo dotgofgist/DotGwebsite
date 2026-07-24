@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
+import { getCanonicalUrl } from "@/config/site-url";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { NoticeList } from "@/features/notices/components/notice-list";
 import { getAllNotices } from "@/features/notices/queries";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: getCanonicalUrl("/notices"),
+  },
   title: "공지사항",
   description: "DotG 게임창작부의 주요 소식과 안내를 확인합니다.",
 };

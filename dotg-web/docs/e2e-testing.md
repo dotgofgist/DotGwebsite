@@ -24,9 +24,13 @@ pnpm run test:e2e:public
 pnpm run test:e2e:auth
 pnpm run test:e2e:admin
 pnpm run test:e2e:mobile
+pnpm run test:seo
+pnpm run test:a11y
 ```
 
 Use `pnpm run test:e2e:headed`, `pnpm run test:e2e:debug`, or `pnpm run test:e2e:ui` for local debugging. Reports are written to `playwright-report`, and failure artifacts are written to `test-results/e2e`.
+
+CI runs the same suite through `pnpm run ci:e2e` after installing Chromium with `pnpm exec playwright install --with-deps chromium`. Failed CI runs upload `playwright-report` and `test-results/e2e` as short-retention artifacts.
 
 ## Safety
 

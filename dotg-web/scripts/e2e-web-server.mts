@@ -14,8 +14,8 @@ function readLocalAnonKey(): string {
   const command = process.platform === "win32" ? (process.env.ComSpec ?? "cmd.exe") : pnpmBin;
   const commandArgs =
     process.platform === "win32"
-      ? ["/d", "/c", "pnpm.cmd supabase status"]
-      : ["supabase", "status"];
+      ? ["/d", "/c", "pnpm.cmd supabase status --output json"]
+      : ["supabase", "status", "--output", "json"];
   const result = spawnSync(command, commandArgs, {
     cwd: process.cwd(),
     encoding: "utf8",

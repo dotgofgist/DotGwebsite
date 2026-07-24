@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getCanonicalUrl } from "@/config/site-url";
 import { Container } from "@/components/ui/container";
 import { ActivityList } from "@/features/club/components/activity-list";
 import { ClubGoals } from "@/features/club/components/club-goals";
@@ -7,6 +8,9 @@ import { ClubIntroduction } from "@/features/club/components/club-introduction";
 import { ClubProcess } from "@/features/club/components/club-process";
 
 export const metadata: Metadata = {
+  alternates: {
+    canonical: getCanonicalUrl("/about"),
+  },
   title: "동아리 소개",
   description: "게임창작부 DotG의 활동 목표와 제작 흐름을 소개합니다.",
 };

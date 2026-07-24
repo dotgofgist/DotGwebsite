@@ -1,0 +1,26 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /dotg-web
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      app-dependencies:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "@playwright/test"
+          - "supabase"
+          - "vercel"
+      platform-tools:
+        patterns:
+          - "@playwright/test"
+          - "supabase"
+          - "vercel"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5

@@ -38,6 +38,13 @@ pnpm run test:admin
 pnpm run test:storage
 pnpm run e2e:preflight
 pnpm run test:e2e
+pnpm run ci:static
+pnpm run ci:database
+pnpm run ci:build
+pnpm run ci:e2e
+pnpm run test:a11y
+pnpm run test:seo
+pnpm run release:check
 pnpm run env:check
 pnpm run env:check:production
 pnpm run storage:paths:check
@@ -51,6 +58,10 @@ pnpm run supabase:types
 `pnpm build` runs `scripts/check-env.ts` first. Local builds without Supabase are treated like production builds by `NODE_ENV=production`, so provide Supabase env values when building locally.
 
 Playwright E2E tests use the local Supabase stack by default and create disposable `e2e-*` fixtures. See `docs/e2e-testing.md` for browser installation, role fixtures, and remote-target safeguards.
+
+GitHub Actions run PR validation, local Supabase tests, Playwright E2E, optional Vercel Preview deployment, and manually approved Production deployment. See `docs/ci-cd.md`.
+
+Before Production, use `docs/release-checklist.md` and `docs/production-runbook.md`. `pnpm run release:check` reproduces the local release verification bundle and resets local Supabase.
 
 ## Data Policy
 
@@ -75,3 +86,7 @@ The database stores object paths. Public URLs are created when data is queried. 
 - `docs/recruitment-management.md`
 - `docs/storage-management.md`
 - `docs/e2e-testing.md`
+- `docs/ci-cd.md`
+- `docs/release-checklist.md`
+- `docs/release-readiness.md`
+- `docs/production-runbook.md`

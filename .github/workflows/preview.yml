@@ -1,0 +1,95 @@
+name: Preview Deployment
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: dotg-web
+
+env:
+  CI: "true"
+  SUPABASE_TELEMETRY_DISABLED: "1"
+
+jobs:
+  vercel-preview:
+    name: Vercel Preview
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    environment:
+      name: preview
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    outputs:
+      preview-url: ${{ steps.deploy.outputs.preview-url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: dotg-web/.nvmrc
+          cache: pnpm
+          cache-dependency-path: dotg-web/pnpm-lock.yaml
+
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.25.0 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate Vercel credentials
+        run: |
+          test -n "$VERCEL_TOKEN"
+          test -n "$VERCEL_ORG_ID"
+          test -n "$VERCEL_PROJECT_ID"
+
+      - name: Pull Vercel preview environment
+        run: pnpm exec vercel pull --yes --environment=preview --token "$VERCEL_TOKEN"
+
+      - name: Build Vercel preview
+        run: pnpm exec vercel build --token "$VERCEL_TOKEN"
+
+      - name: Deploy Vercel preview
+        id: deploy
+        run: |
+          url=$(pnpm exec vercel deploy --prebuilt --token "$VERCEL_TOKEN" | tail -n 1)
+          echo "$url" > deployment-url.txt
+          echo "preview-url=$url" >> "$GITHUB_OUTPUT"
+
+      - name: Read-only preview smoke
+        env:
+          SMOKE_BASE_URL: ${{ steps.deploy.outputs.preview-url }}
+        run: pnpm run smoke:preview
+
+      - name: Deployment summary
+        run: |
+          echo "### Preview Deployment" >> "$GITHUB_STEP_SUMMARY"
+          echo "- URL: ${{ steps.deploy.outputs.preview-url }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Smoke: passed" >> "$GITHUB_STEP_SUMMARY"
+
+  fork-preview-skipped:
+    name: Preview Skipped For Fork
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.full_name != github.repository
+    steps:
+      - name: Explain skip
+        working-directory: .
+        run: echo "Preview deployment is skipped for fork PRs because repository secrets are unavailable."
