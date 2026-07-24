@@ -48,6 +48,8 @@ where id = '<AUTH_USER_UUID>';
 
 For hosted Supabase, create or invite the user in the Supabase Dashboard and update the matching `profiles.role` value in the database.
 
+The first hosted admin bootstrap procedure is documented in `docs/supabase-remote-deployment.md`. Use `supabase/snippets/bootstrap-admin.sql` only after replacing `<AUTH_USER_UUID>` with a real Auth user UUID from the Dashboard.
+
 ## Security Principles
 
 - No Service Role key in the app.

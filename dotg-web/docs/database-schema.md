@@ -1,6 +1,6 @@
 # DotG Supabase Database Schema
 
-This schema stores DotG P0 public content and the database-backed administrator role model. The Next.js app still reads from TypeScript mock data in this phase; these tables prepare the local Supabase schema, seed data, and RLS boundary for later query and CRUD work.
+This schema stores DotG P0 public content and the database-backed administrator role model. Public pages read from Supabase when environment variables are configured; local development can still use mock/config fallback when Supabase is intentionally incomplete.
 
 ## Tables
 
@@ -52,7 +52,9 @@ All public schema tables have RLS enabled. Profile creation is handled by `publi
 
 ## Seed Mapping Notes
 
-The seed mirrors counts, slugs, status values, dates, ordering, member/link shape, site config shape, contact item count, and social platform list from the current mock data. Current source strings in several files are mojibake in the repository, so the seed uses concise local-development text while preserving stable identifiers and avoiding fake URLs. Project external links are empty in mock data, so no `project_links` rows are inserted. Social links use `url = null` and `is_active = false`.
+`supabase/seed.sql` is development-only data applied by `supabase db reset`. It mirrors counts, slugs, status values, dates, ordering, member/link shape, site config shape, contact item count, and social platform list from the current mock data. Current source strings in several files are mojibake in the repository, so the seed uses concise local-development text while preserving stable identifiers and avoiding fake URLs. Project external links are empty in mock data, so no `project_links` rows are inserted. Social links use `url = null` and `is_active = false`.
+
+`supabase/seeds/production.sql` is a separate explicit baseline seed for hosted projects. It only inserts the `site_settings` singleton if missing and must not create fake content, Auth users, profiles, or administrator accounts.
 
 ## Future Work
 
