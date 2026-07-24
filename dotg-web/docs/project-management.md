@@ -56,6 +56,16 @@ signal-lost
 
 Project create, update, and delete actions revalidate public and admin project paths including `/`, `/projects`, `/admin`, and `/admin/projects`.
 
+## Project Images
+
+Project thumbnails are stored in Supabase Storage under:
+
+```text
+{projectId}/thumbnail/{uuid}.{jpg|png|webp}
+```
+
+Uploads require JPEG, PNG, or WebP signatures and verified dimensions. Replacement uses a current-path condition when saving the new DB path, and old object removal is limited to the same project prefix.
+
 ## Current Limits
 
-Project image upload and Supabase Storage are not implemented yet. Project saves currently use application-level multi-step mutations for relation rows; a dedicated database RPC can be added later if stricter transaction encapsulation is needed.
+Project saves currently use application-level multi-step mutations for relation rows; a dedicated database RPC can be added later if stricter transaction encapsulation is needed.

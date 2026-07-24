@@ -5,6 +5,11 @@ import { redirect } from "next/navigation";
 import { requireContentManager } from "@/features/auth/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/supabase/database.types";
+import {
+  isValidProjectThumbnailPath,
+  removeStorageObject,
+  warnStorageIntegrity,
+} from "@/lib/supabase/storage";
 import { PROJECT_IMAGES_BUCKET } from "@/lib/supabase/storage-constants";
 import type { ProjectActionState, ProjectFormValues } from "./validation";
 import { validateProjectFormData } from "./validation";
@@ -246,10 +251,21 @@ export async function deleteProjectAction(formData: FormData): Promise<never> {
     redirect(`/admin/projects/${id}/edit?error=delete`);
   }
 
-  if (existing.data?.thumbnail_path) {
-    await supabase.storage
-      .from(PROJECT_IMAGES_BUCKET)
-      .remove([existing.data.thumbnail_path]);
+  if (isValidProjectThumbnailPath(id, existing.data?.thumbnail_path)) {
+    await removeStorageObject(
+      supabase,
+      PROJECT_IMAGES_BUCKET,
+      existing.data?.thumbnail_path,
+    );
+  } else if (existing.data?.thumbnail_path) {
+    warnStorageIntegrity(
+      "Project delete skipped thumbnail removal because the path is outside the project prefix.",
+      {
+        bucket: PROJECT_IMAGES_BUCKET,
+        path: existing.data.thumbnail_path,
+        projectId: id,
+      },
+    );
   }
 
   void manager;

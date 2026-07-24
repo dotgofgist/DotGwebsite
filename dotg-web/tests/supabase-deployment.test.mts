@@ -57,4 +57,23 @@ describe("Supabase deployment assets", () => {
     assert.match(rls, /all public application tables have RLS enabled/);
     assert.doesNotMatch(`${smoke}\n${rls}`, /^\s*(insert|update|delete|truncate|drop|alter|create|grant|revoke)\b/im);
   });
+
+  it("provides storage integrity checks and guarded orphan cleanup", () => {
+    const paths = read("supabase/snippets/storage-paths-check.sql");
+    const dangling = read("supabase/snippets/storage-dangling-check.sql");
+    const orphans = read("supabase/snippets/storage-orphans-check.sql");
+    const cleanup = read("supabase/snippets/storage-orphans-delete.sql");
+    const cleanupScript = read("scripts/storage-orphans-cleanup.mts");
+
+    assert.match(paths, /invalid_project_thumbnail_path/);
+    assert.match(dangling, /missing_storage_object/);
+    assert.match(orphans, /project_image_orphan/);
+    assert.doesNotMatch(`${paths}\n${dangling}\n${orphans}`, /^\s*(insert|update|delete|truncate|drop|alter|create|grant|revoke)\b/im);
+
+    assert.match(cleanup, /^\s*delete from storage\.objects/im);
+    assert.match(cleanup, /created_at < now\(\) - interval '10 minutes'/);
+    assert.match(cleanup, /returning\s+[\s\S]*bucket_id/i);
+    assert.match(cleanupScript, /--apply/);
+    assert.match(cleanupScript, /Dry run only/);
+  });
 });

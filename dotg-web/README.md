@@ -33,8 +33,13 @@ pnpm lint
 pnpm exec tsc --noEmit
 pnpm build
 pnpm run test:env
+pnpm run test:auth
+pnpm run test:storage
 pnpm run env:check
 pnpm run env:check:production
+pnpm run storage:paths:check
+pnpm run storage:dangling:check
+pnpm run storage:orphans:check
 pnpm supabase db reset
 pnpm supabase test db
 pnpm run supabase:types

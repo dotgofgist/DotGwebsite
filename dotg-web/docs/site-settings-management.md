@@ -17,7 +17,7 @@ description
 short_description
 ```
 
-Hero image, logo, theme, and full metadata management are out of scope.
+Logo and Hero image paths are managed in `site_settings` and stored in Supabase Storage. Theme and full metadata management are out of scope.
 
 ## Contacts
 
@@ -65,10 +65,21 @@ Settings mutations revalidate:
 /admin/settings
 ```
 
+## Site Images
+
+Site assets are stored in the `site-assets` bucket:
+
+```text
+logo/{uuid}.{jpg|png|webp}
+hero/{uuid}.{jpg|png|webp}
+```
+
+Uploads require JPEG, PNG, or WebP signatures and verified dimensions. Replacement uses a current-path condition when saving the new DB path, and old object removal is limited to the matching `logo` or `hero` prefix.
+
 ## Delete vs Disable
 
 Deleting a contact or SNS link is permanent. To keep history while hiding an item publicly, admins should disable it instead.
 
 ## Out Of Scope
 
-Storage, logo upload, hero image upload, navigation editing, user role management, audit logs, and realtime subscriptions are not implemented in this phase.
+Navigation editing, user role management, audit logs, and realtime subscriptions are not implemented in this phase.

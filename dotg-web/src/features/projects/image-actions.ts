@@ -4,9 +4,15 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireContentManager } from "@/features/auth/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { buildStorageObjectPath } from "@/lib/supabase/storage";
+import {
+  createProjectThumbnailPath,
+  isValidProjectThumbnailPath,
+  removeStorageObject,
+  warnStorageIntegrity,
+} from "@/lib/supabase/storage";
 import {
   PROJECT_IMAGES_BUCKET,
+  PROJECT_THUMBNAIL_IMAGE_CONSTRAINTS,
   PROJECT_THUMBNAIL_MAX_BYTES,
 } from "@/lib/supabase/storage-constants";
 import { validateImageFile } from "@/lib/supabase/storage-validation";
@@ -30,13 +36,6 @@ function revalidateProjectImagePaths(slug?: string): void {
   }
 }
 
-async function removeStorageObject(path: string | null | undefined): Promise<void> {
-  if (!path) return;
-
-  const supabase = await createServerSupabaseClient();
-  await supabase.storage.from(PROJECT_IMAGES_BUCKET).remove([path]);
-}
-
 export async function updateProjectThumbnailAction(
   _previousState: ProjectImageActionState,
   formData: FormData,
@@ -45,16 +44,7 @@ export async function updateProjectThumbnailAction(
   const projectId = formData.get("projectId");
 
   if (typeof projectId !== "string" || !uuidPattern.test(projectId)) {
-    return { status: "error", message: "프로젝트 ID가 올바르지 않습니다." };
-  }
-
-  const image = await validateImageFile(formData.get("image"), {
-    fieldName: "프로젝트 대표",
-    maxBytes: PROJECT_THUMBNAIL_MAX_BYTES,
-  });
-
-  if (!image.ok) {
-    return { status: "error", message: image.message };
+    return { status: "error", message: "Invalid project id." };
   }
 
   const supabase = await createServerSupabaseClient();
@@ -65,17 +55,24 @@ export async function updateProjectThumbnailAction(
     .maybeSingle();
 
   if (existing.error) {
-    return { status: "error", message: "프로젝트 정보를 불러오지 못했습니다." };
+    return { status: "error", message: "Could not load project image state." };
   }
 
   if (!existing.data) {
-    return { status: "error", message: "프로젝트를 찾을 수 없습니다." };
+    return { status: "error", message: "Project not found." };
   }
 
-  const nextPath = buildStorageObjectPath(
-    [projectId, "thumbnail"],
-    image.imageType.extension,
-  );
+  const image = await validateImageFile(formData.get("image"), {
+    fieldName: "Project thumbnail",
+    maxBytes: PROJECT_THUMBNAIL_MAX_BYTES,
+    dimensions: PROJECT_THUMBNAIL_IMAGE_CONSTRAINTS,
+  });
+
+  if (!image.ok) {
+    return { status: "error", message: image.message };
+  }
+
+  const nextPath = createProjectThumbnailPath(projectId, image.imageType.extension);
   const upload = await supabase.storage
     .from(PROJECT_IMAGES_BUCKET)
     .upload(nextPath, image.file, {
@@ -85,20 +82,46 @@ export async function updateProjectThumbnailAction(
     });
 
   if (upload.error) {
-    return { status: "error", message: "프로젝트 이미지를 업로드하지 못했습니다." };
+    return { status: "error", message: "Could not upload the project image." };
   }
 
-  const update = await supabase
+  const updateQuery = supabase
     .from("projects")
     .update({ thumbnail_path: nextPath })
     .eq("id", projectId);
+  const update =
+    existing.data.thumbnail_path === null
+      ? await updateQuery.is("thumbnail_path", null).select("id").maybeSingle()
+      : await updateQuery.eq("thumbnail_path", existing.data.thumbnail_path).select("id").maybeSingle();
 
-  if (update.error) {
-    await removeStorageObject(nextPath);
-    return { status: "error", message: "프로젝트 이미지 정보를 저장하지 못했습니다." };
+  if (update.error || !update.data) {
+    const rollback = await removeStorageObject(supabase, PROJECT_IMAGES_BUCKET, nextPath);
+    if (!rollback.ok) {
+      return {
+        status: "error",
+        message:
+          "Image save failed and the uploaded object could not be cleaned up automatically.",
+      };
+    }
+
+    return {
+      status: "error",
+      message: update.error
+        ? "Could not save the project image."
+        : "The project image changed while you were editing. Please retry.",
+    };
   }
 
-  await removeStorageObject(existing.data.thumbnail_path);
+  if (isValidProjectThumbnailPath(projectId, existing.data.thumbnail_path)) {
+    await removeStorageObject(supabase, PROJECT_IMAGES_BUCKET, existing.data.thumbnail_path);
+  } else if (existing.data.thumbnail_path) {
+    warnStorageIntegrity("Existing project thumbnail path was not removed because it is outside the project prefix.", {
+      bucket: PROJECT_IMAGES_BUCKET,
+      path: existing.data.thumbnail_path,
+      projectId,
+    });
+  }
+
   revalidateProjectImagePaths(existing.data.slug);
   redirect(`/admin/projects/${projectId}/edit?image=uploaded`);
 }
@@ -124,16 +147,33 @@ export async function removeProjectThumbnailAction(
     redirect(`/admin/projects/${projectId}/edit?error=image`);
   }
 
+  if (!existing.data.thumbnail_path) {
+    revalidateProjectImagePaths(existing.data.slug);
+    redirect(`/admin/projects/${projectId}/edit?image=removed`);
+  }
+
   const update = await supabase
     .from("projects")
     .update({ thumbnail_path: null })
-    .eq("id", projectId);
+    .eq("id", projectId)
+    .eq("thumbnail_path", existing.data.thumbnail_path)
+    .select("id")
+    .maybeSingle();
 
-  if (update.error) {
+  if (update.error || !update.data) {
     redirect(`/admin/projects/${projectId}/edit?error=image`);
   }
 
-  await removeStorageObject(existing.data.thumbnail_path);
+  if (isValidProjectThumbnailPath(projectId, existing.data.thumbnail_path)) {
+    await removeStorageObject(supabase, PROJECT_IMAGES_BUCKET, existing.data.thumbnail_path);
+  } else {
+    warnStorageIntegrity("Cleared invalid project thumbnail path without deleting storage object.", {
+      bucket: PROJECT_IMAGES_BUCKET,
+      path: existing.data.thumbnail_path,
+      projectId,
+    });
+  }
+
   revalidateProjectImagePaths(existing.data.slug);
   redirect(`/admin/projects/${projectId}/edit?image=removed`);
 }
