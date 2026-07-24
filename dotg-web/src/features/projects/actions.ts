@@ -123,11 +123,11 @@ export async function createProjectAction(
   _previousState: ProjectActionState,
   formData: FormData,
 ): Promise<ProjectActionState> {
+  const manager = await requireContentManager();
   const validation = validateProjectFormData(formData);
 
   if (!validation.ok) return validation.state;
 
-  const manager = await requireContentManager();
   const supabase = await createServerSupabaseClient();
   const payload = {
     ...buildProjectPayload(validation.values, manager.id),
@@ -162,11 +162,11 @@ export async function updateProjectAction(
   _previousState: ProjectActionState,
   formData: FormData,
 ): Promise<ProjectActionState> {
+  const manager = await requireContentManager();
   const validation = validateProjectFormData(formData);
 
   if (!validation.ok) return validation.state;
 
-  const manager = await requireContentManager();
   const supabase = await createServerSupabaseClient();
   const id = validation.values.id;
 

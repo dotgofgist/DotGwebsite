@@ -2,6 +2,8 @@
 
 DotG admin authentication uses Supabase email/password Auth, Supabase SSR cookies, and the `public.profiles.role` column for authorization.
 
+The detailed role and route policy lives in `docs/authorization-model.md`.
+
 ## Flow
 
 ```text
@@ -18,6 +20,8 @@ browser
 - `member`: public site only, no admin access.
 - `editor`: admin access and content management.
 - `admin`: admin access, content management, and future user role management.
+
+Server code checks `profiles.role` on each request path that needs authorization. Client-rendered role labels are informational only.
 
 ## Login
 
@@ -59,6 +63,8 @@ The first hosted admin bootstrap procedure is documented in `docs/supabase-remot
 - Check roles on the server through `profiles.role`.
 - Keep RLS policies enabled.
 - Recheck `requireContentManager()` inside future admin Server Actions.
+- Use `requireAdmin()` for future admin-only server operations.
+- Treat missing profiles as unauthorized, not as managers.
 - Never log passwords, tokens, cookies, or environment values.
 
 ## Not Implemented Yet

@@ -43,6 +43,7 @@ async function uploadSiteAsset(
     maxBytes: number;
   },
 ): Promise<SiteImageActionState> {
+  const manager = await requireContentManager();
   const image = await validateImageFile(formData.get("image"), {
     fieldName: options.fieldName,
     maxBytes: options.maxBytes,
@@ -52,7 +53,6 @@ async function uploadSiteAsset(
     return { status: "error", message: image.message };
   }
 
-  const manager = await requireContentManager();
   const supabase = await createServerSupabaseClient();
   const existing = await supabase
     .from("site_settings")

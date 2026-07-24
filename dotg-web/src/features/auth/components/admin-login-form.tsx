@@ -63,7 +63,7 @@ export function AdminLoginForm({
           type="password"
         />
       </FormField>
-      <LoginSubmitButton />
+      <LoginSubmitButton disabled={disabled} />
       <p className="text-sm leading-6 text-neutral-500" role="status">
         {state.message ??
           (disabled

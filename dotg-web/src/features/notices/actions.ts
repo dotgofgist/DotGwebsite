@@ -47,11 +47,11 @@ export async function createNoticeAction(
   _previousState: NoticeActionState,
   formData: FormData,
 ): Promise<NoticeActionState> {
+  const manager = await requireContentManager();
   const validation = validateNoticeFormData(formData);
 
   if (!validation.ok) return validation.state;
 
-  const manager = await requireContentManager();
   const supabase = await createServerSupabaseClient();
   const payload = {
     ...buildNoticePayload(validation.values, manager.id),
@@ -82,11 +82,11 @@ export async function updateNoticeAction(
   _previousState: NoticeActionState,
   formData: FormData,
 ): Promise<NoticeActionState> {
+  const manager = await requireContentManager();
   const validation = validateNoticeFormData(formData);
 
   if (!validation.ok) return validation.state;
 
-  const manager = await requireContentManager();
   const supabase = await createServerSupabaseClient();
   const id = validation.values.id;
 

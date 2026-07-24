@@ -38,11 +38,11 @@ export async function updateSiteSettingsAction(
   _previousState: SiteSettingsActionState,
   formData: FormData,
 ): Promise<SiteSettingsActionState> {
+  const manager = await requireContentManager();
   const validation = validateSiteSettingsFormData(formData);
 
   if (!validation.ok) return validation.state;
 
-  const manager = await requireContentManager();
   const supabase = await createServerSupabaseClient();
   const payload = {
     id: 1,
@@ -68,11 +68,11 @@ export async function createContactItemAction(
   _previousState: ContactItemActionState,
   formData: FormData,
 ): Promise<ContactItemActionState> {
+  await requireContentManager();
   const validation = validateContactItemFormData(formData);
 
   if (!validation.ok) return validation.state;
 
-  await requireContentManager();
   const supabase = await createServerSupabaseClient();
   const payload = {
     label: validation.values.label,
@@ -100,6 +100,7 @@ export async function updateContactItemAction(
   _previousState: ContactItemActionState,
   formData: FormData,
 ): Promise<ContactItemActionState> {
+  await requireContentManager();
   const validation = validateContactItemFormData(formData);
 
   if (!validation.ok) return validation.state;
@@ -108,7 +109,6 @@ export async function updateContactItemAction(
     return { status: "error", message: "연락처 id가 없습니다." };
   }
 
-  await requireContentManager();
   const supabase = await createServerSupabaseClient();
   const payload = {
     label: validation.values.label,
@@ -132,13 +132,13 @@ export async function updateContactItemAction(
 }
 
 export async function deleteContactItemAction(formData: FormData): Promise<never> {
+  await requireContentManager();
   const id = formData.get("id");
 
   if (typeof id !== "string" || !uuidPattern.test(id)) {
     redirect("/admin/settings?error=contact-delete");
   }
 
-  await requireContentManager();
   const supabase = await createServerSupabaseClient();
   const { error } = await supabase.from("contact_items").delete().eq("id", id);
 
@@ -154,11 +154,11 @@ export async function createSocialLinkAction(
   _previousState: SocialLinkActionState,
   formData: FormData,
 ): Promise<SocialLinkActionState> {
+  await requireContentManager();
   const validation = validateSocialLinkFormData(formData);
 
   if (!validation.ok) return validation.state;
 
-  await requireContentManager();
   const supabase = await createServerSupabaseClient();
   const payload = {
     platform: validation.values.platform,
@@ -186,6 +186,7 @@ export async function updateSocialLinkAction(
   _previousState: SocialLinkActionState,
   formData: FormData,
 ): Promise<SocialLinkActionState> {
+  await requireContentManager();
   const validation = validateSocialLinkFormData(formData);
 
   if (!validation.ok) return validation.state;
@@ -194,7 +195,6 @@ export async function updateSocialLinkAction(
     return { status: "error", message: "SNS 링크 id가 없습니다." };
   }
 
-  await requireContentManager();
   const supabase = await createServerSupabaseClient();
   const payload = {
     platform: validation.values.platform,
@@ -218,13 +218,13 @@ export async function updateSocialLinkAction(
 }
 
 export async function deleteSocialLinkAction(formData: FormData): Promise<never> {
+  await requireContentManager();
   const id = formData.get("id");
 
   if (typeof id !== "string" || !uuidPattern.test(id)) {
     redirect("/admin/settings?error=social-delete");
   }
 
-  await requireContentManager();
   const supabase = await createServerSupabaseClient();
   const { error } = await supabase.from("social_links").delete().eq("id", id);
 

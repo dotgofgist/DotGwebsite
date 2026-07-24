@@ -76,6 +76,7 @@ export async function createRecruitmentAction(
   _previousState: RecruitmentActionState,
   formData: FormData,
 ): Promise<RecruitmentActionState> {
+  await requireContentManager();
   const validation = validateRecruitmentFormData(formData);
 
   if (!validation.ok) return validation.state;
@@ -92,6 +93,7 @@ export async function updateRecruitmentAction(
   _previousState: RecruitmentActionState,
   formData: FormData,
 ): Promise<RecruitmentActionState> {
+  await requireContentManager();
   const validation = validateRecruitmentFormData(formData);
 
   if (!validation.ok) return validation.state;
@@ -111,13 +113,13 @@ export async function updateRecruitmentAction(
 export async function setCurrentRecruitmentAction(
   formData: FormData,
 ): Promise<never> {
+  await requireContentManager();
   const id = formData.get("id");
 
   if (typeof id !== "string" || !uuidPattern.test(id)) {
     redirect("/admin/recruitment?error=current");
   }
 
-  await requireContentManager();
   const supabase = await createServerSupabaseClient();
   const { error } = await supabase.rpc("set_current_recruitment", { p_id: id });
 
@@ -132,13 +134,13 @@ export async function setCurrentRecruitmentAction(
 export async function unsetCurrentRecruitmentAction(
   formData: FormData,
 ): Promise<never> {
+  await requireContentManager();
   const id = formData.get("id");
 
   if (typeof id !== "string" || !uuidPattern.test(id)) {
     redirect("/admin/recruitment?error=current");
   }
 
-  await requireContentManager();
   const supabase = await createServerSupabaseClient();
   const { error } = await supabase.rpc("unset_current_recruitment", { p_id: id });
 
@@ -153,13 +155,13 @@ export async function unsetCurrentRecruitmentAction(
 export async function archiveRecruitmentAction(
   formData: FormData,
 ): Promise<never> {
+  const manager = await requireContentManager();
   const id = formData.get("id");
 
   if (typeof id !== "string" || !uuidPattern.test(id)) {
     redirect("/admin/recruitment?error=archive");
   }
 
-  const manager = await requireContentManager();
   const supabase = await createServerSupabaseClient();
   const { error } = await supabase
     .from("recruitments")

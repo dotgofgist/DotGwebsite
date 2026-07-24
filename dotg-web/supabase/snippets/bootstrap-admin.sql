@@ -13,10 +13,10 @@ begin;
 
 do $$
 declare
-  v_auth_user_id_text text := '<AUTH_USER_UUID>';
+  v_auth_user_id_text text := '5ca67392-336f-4cc0-abd7-2e0a48bf82dc';
   v_auth_user_id uuid;
 begin
-  if v_auth_user_id_text = '<AUTH_USER_UUID>' then
+  if v_auth_user_id_text = '5ca67392-336f-4cc0-abd7-2e0a48bf82dc' then
     raise exception 'Replace <AUTH_USER_UUID> before running this bootstrap script.';
   end if;
 
@@ -40,6 +40,6 @@ select
   created_at,
   updated_at
 from public.profiles
-where id = '<AUTH_USER_UUID>'::uuid;
+where id = '5ca67392-336f-4cc0-abd7-2e0a48bf82dc'::uuid;
 
 commit;

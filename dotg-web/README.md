@@ -59,6 +59,7 @@ The database stores object paths. Public URLs are created when data is queried. 
 
 - `docs/environment-configuration.md`
 - `docs/supabase-remote-deployment.md`
+- `docs/authorization-model.md`
 - `docs/database-schema.md`
 - `docs/authentication.md`
 - `docs/recruitment-management.md`

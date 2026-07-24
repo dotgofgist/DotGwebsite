@@ -50,6 +50,8 @@ Foreign keys use `on delete cascade` for dependent content rows and `on delete s
 
 All public schema tables have RLS enabled. Profile creation is handled by `public.handle_new_user()` on `auth.users`, always with role `member`.
 
+Application authorization uses the same role model through `requireContentManager()` and `requireAdmin()`. See `docs/authorization-model.md`.
+
 ## Seed Mapping Notes
 
 `supabase/seed.sql` is development-only data applied by `supabase db reset`. It mirrors counts, slugs, status values, dates, ordering, member/link shape, site config shape, contact item count, and social platform list from the current mock data. Current source strings in several files are mojibake in the repository, so the seed uses concise local-development text while preserving stable identifiers and avoiding fake URLs. Project external links are empty in mock data, so no `project_links` rows are inserted. Social links use `url = null` and `is_active = false`.

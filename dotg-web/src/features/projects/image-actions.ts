@@ -41,6 +41,7 @@ export async function updateProjectThumbnailAction(
   _previousState: ProjectImageActionState,
   formData: FormData,
 ): Promise<ProjectImageActionState> {
+  await requireContentManager();
   const projectId = formData.get("projectId");
 
   if (typeof projectId !== "string" || !uuidPattern.test(projectId)) {
@@ -56,7 +57,6 @@ export async function updateProjectThumbnailAction(
     return { status: "error", message: image.message };
   }
 
-  await requireContentManager();
   const supabase = await createServerSupabaseClient();
   const existing = await supabase
     .from("projects")
@@ -106,13 +106,13 @@ export async function updateProjectThumbnailAction(
 export async function removeProjectThumbnailAction(
   formData: FormData,
 ): Promise<never> {
+  await requireContentManager();
   const projectId = formData.get("projectId");
 
   if (typeof projectId !== "string" || !uuidPattern.test(projectId)) {
     redirect("/admin/projects?error=image");
   }
 
-  await requireContentManager();
   const supabase = await createServerSupabaseClient();
   const existing = await supabase
     .from("projects")
