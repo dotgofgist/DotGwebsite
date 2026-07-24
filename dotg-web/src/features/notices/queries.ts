@@ -1,23 +1,30 @@
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { shouldUsePublicMockFallback } from "@/lib/supabase/env";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { mapNoticeRowToAdminNotice } from "./admin-mappers";
 import { notices } from "./mock-data";
 import type { Notice } from "./types";
 
-function ensureGeneratedDatabaseTypes(scope: string): void {
-  if (isSupabaseConfigured()) {
-    throw new Error(
-      `${scope} Supabase 조회를 위해 src/lib/supabase/database.types.ts 생성이 필요합니다.`,
-    );
-  }
-}
+const publicNoticeColumns = `
+  id,
+  slug,
+  title,
+  summary,
+  content,
+  pinned,
+  publication_status,
+  published_at,
+  created_at,
+  updated_at,
+  created_by,
+  updated_by
+`;
 
 function compareNoticeDate(a: Notice, b: Notice): number {
   return b.publishedAt.localeCompare(a.publishedAt);
 }
 
-export async function getAllNotices(): Promise<Notice[]> {
-  ensureGeneratedDatabaseTypes("공개 공지사항 목록");
-
-  return notices
+function sortFallbackNotices(fallbackNotices: Notice[]): Notice[] {
+  return fallbackNotices
     .map((notice, index) => ({ notice, index }))
     .sort((a, b) => {
       if (a.notice.pinned !== b.notice.pinned) {
@@ -35,10 +42,29 @@ export async function getAllNotices(): Promise<Notice[]> {
     .map(({ notice }) => notice);
 }
 
-export async function getLatestNotices(limit?: number): Promise<Notice[]> {
-  ensureGeneratedDatabaseTypes("최신 공지사항");
+export async function getAllNotices(): Promise<Notice[]> {
+  if (shouldUsePublicMockFallback("public notices")) {
+    return sortFallbackNotices(notices);
+  }
 
-  const latestNotices = [...notices].sort(compareNoticeDate);
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("notices")
+    .select(publicNoticeColumns)
+    .eq("publication_status", "published")
+    .order("pinned", { ascending: false })
+    .order("published_at", { ascending: false })
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error("Failed to load public notices from Supabase.");
+  }
+
+  return data.map((row) => mapNoticeRowToAdminNotice(row));
+}
+
+export async function getLatestNotices(limit?: number): Promise<Notice[]> {
+  const latestNotices = [...(await getAllNotices())].sort(compareNoticeDate);
 
   if (typeof limit === "number") {
     return latestNotices.slice(0, limit);
@@ -50,9 +76,23 @@ export async function getLatestNotices(limit?: number): Promise<Notice[]> {
 export async function getNoticeBySlug(
   slug: string,
 ): Promise<Notice | undefined> {
-  ensureGeneratedDatabaseTypes("공개 공지사항 상세");
+  if (shouldUsePublicMockFallback("public notice detail")) {
+    return notices.find((notice) => notice.slug === slug);
+  }
 
-  return notices.find((notice) => notice.slug === slug);
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("notices")
+    .select(publicNoticeColumns)
+    .eq("slug", slug)
+    .eq("publication_status", "published")
+    .maybeSingle();
+
+  if (error) {
+    throw new Error("Failed to load public notice detail from Supabase.");
+  }
+
+  return data ? mapNoticeRowToAdminNotice(data) : undefined;
 }
 
 export async function getPinnedNotices(): Promise<Notice[]> {

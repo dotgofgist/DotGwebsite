@@ -1,10 +1,10 @@
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { shouldUsePublicMockFallback } from "@/lib/supabase/env";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { mapRecruitmentRowToRecruitment } from "./admin-mappers";
 import type { Recruitment } from "./types";
 
 export async function getCurrentRecruitment(): Promise<Recruitment | null> {
-  if (!isSupabaseConfigured()) {
+  if (shouldUsePublicMockFallback("public recruitment")) {
     return null;
   }
 

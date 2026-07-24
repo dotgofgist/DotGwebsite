@@ -4,10 +4,10 @@ import type { Database } from "./database.types";
 import { requireSupabasePublicEnv } from "./env";
 
 export async function createServerSupabaseClient() {
-  const { url, publishableKey } = requireSupabasePublicEnv();
+  const { url, anonKey } = requireSupabasePublicEnv();
   const cookieStore = await cookies();
 
-  return createServerClient<Database>(url, publishableKey, {
+  return createServerClient<Database>(url, anonKey, {
     cookies: {
       getAll() {
         return cookieStore.getAll();

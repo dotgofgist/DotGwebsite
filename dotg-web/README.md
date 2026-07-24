@@ -1,64 +1,63 @@
-# DotG 웹사이트
+# DotG Website
 
-DotG 게임창작부 웹사이트입니다. 동아리 소개, 프로젝트 아카이브, 모집 안내, 공지사항, 연락처, 관리자 콘텐츠 관리 화면을 제공합니다.
+DotG game creation club website built with Next.js App Router, React, TypeScript, Tailwind CSS, and Supabase Auth/Database/Storage.
 
-## 기술 스택
-
-- Next.js 16 App Router
-- React 19
-- TypeScript
-- Tailwind CSS 4
-- Supabase Auth, Database, Storage
-- pnpm
-
-## 로컬 실행
+## Local Development
 
 ```powershell
 pnpm install
 pnpm dev
 ```
 
-개발 서버는 기본적으로 `http://localhost:3000`에서 확인합니다.
+The development server runs at `http://localhost:3000` by default.
 
-## 주요 명령어
+Local development can run without Supabase environment variables. In that case, supported public pages use mock/config fallback data and print a warning once per query scope. Admin pages still require Supabase Auth and do not use mock fallback.
+
+## Environment Variables
+
+Copy `.env.example` to `.env.local` and fill in these values when connecting to Supabase:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+Preview and Production deployments must set both variables in Vercel. Missing, partial, invalid, or non-HTTPS hosted Supabase URLs fail environment validation instead of falling back to mock data.
+
+Do not add a service role key to this app. The browser client uses the anon key with Supabase RLS; privileged database access belongs outside the public Next.js bundle.
+
+## Commands
 
 ```powershell
 pnpm lint
-pnpm build
 pnpm exec tsc --noEmit
+pnpm build
+pnpm run test:env
+pnpm run env:check
+pnpm run env:check:production
 pnpm supabase db reset
 pnpm supabase test db
 pnpm run supabase:types
 ```
 
-## 환경 변수
+`pnpm build` runs `scripts/check-env.ts` first. Local builds without Supabase are treated like production builds by `NODE_ENV=production`, so provide Supabase env values when building locally.
 
-`.env.example`을 참고해 `.env.local`을 설정합니다.
+## Data Policy
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
-```
-
-`.env.local`은 Git에 커밋하지 않습니다.
-
-## 현재 데이터 상태
-
-공개 프로젝트, 공지사항, 모집 정보, 사이트 설정, 연락처, SNS 링크는 Supabase 조회로 연결되어 있습니다. Supabase 환경 변수가 없을 때는 일부 공개 페이지가 로컬 fallback 데이터를 사용합니다.
-
-관리자 화면은 Supabase Auth의 `editor` 또는 `admin` 프로필 역할만 접근할 수 있으며, 프로젝트/공지사항/모집/사이트 설정/연락처/SNS 관리가 Supabase에 저장됩니다.
+Public projects, notices, recruitment, site settings, contacts, and social links read from Supabase when it is configured. Mock/config fallback is allowed only for local development with incomplete Supabase configuration. If Supabase is configured and a query fails, the error is passed to the app instead of being hidden by fallback data.
 
 ## Storage
 
-이미지는 Supabase Storage public bucket을 사용합니다.
+Images use Supabase Storage public buckets:
 
-- `project-images`: 프로젝트 대표 이미지
-- `site-assets`: 사이트 로고와 메인 Hero 이미지
+- `project-images`: project thumbnails
+- `site-assets`: site logo and main hero image
 
-DB에는 object path만 저장하고, 공개 URL은 조회 시 생성합니다. 업로드는 JPEG, PNG, WebP만 허용하며 서버에서 MIME과 파일 시그니처를 함께 검증합니다. 자세한 내용은 `docs/storage-management.md`를 참고하세요.
+The database stores object paths. Public URLs are created when data is queried. See `docs/storage-management.md` for details.
 
-## 문서
+## Documentation
 
+- `docs/environment-configuration.md`
 - `docs/database-schema.md`
 - `docs/authentication.md`
 - `docs/recruitment-management.md`

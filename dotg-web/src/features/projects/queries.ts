@@ -1,4 +1,4 @@
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { shouldUsePublicMockFallback } from "@/lib/supabase/env";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getPublicStorageUrl } from "@/lib/supabase/storage";
 import { PROJECT_IMAGES_BUCKET } from "@/lib/supabase/storage-constants";
@@ -84,7 +84,7 @@ function withThumbnailUrl(
 }
 
 export async function getAllProjects(): Promise<Project[]> {
-  if (!isSupabaseConfigured()) {
+  if (shouldUsePublicMockFallback("public projects")) {
     return sortProjects(projects);
   }
 
@@ -124,7 +124,7 @@ export async function getFeaturedProjects(limit?: number): Promise<Project[]> {
 export async function getProjectBySlug(
   slug: string,
 ): Promise<Project | undefined> {
-  if (!isSupabaseConfigured()) {
+  if (shouldUsePublicMockFallback("public project detail")) {
     return projects.find((project) => project.slug === slug);
   }
 

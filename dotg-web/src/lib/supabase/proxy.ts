@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "./database.types";
-import { getSupabasePublicEnv } from "./env";
+import { getSupabasePublicEnv, mustRequireSupabaseEnv } from "./env";
 import { createAdminLoginPath } from "@/features/auth/redirects";
 
 function isProtectedAdminPath(pathname: string): boolean {
@@ -33,6 +33,10 @@ export async function updateSession(
   const protectedAdminPath = isProtectedAdminPath(request.nextUrl.pathname);
 
   if (!env) {
+    if (mustRequireSupabaseEnv()) {
+      throw new Error("Supabase environment is required outside local development.");
+    }
+
     if (protectedAdminPath) {
       return redirectToLogin(request, "not-configured");
     }
@@ -46,7 +50,7 @@ export async function updateSession(
     request,
   });
 
-  const supabase = createServerClient<Database>(env.url, env.publishableKey, {
+  const supabase = createServerClient<Database>(env.url, env.anonKey, {
     cookies: {
       getAll() {
         return request.cookies.getAll();

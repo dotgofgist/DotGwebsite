@@ -1,7 +1,7 @@
 import { contactItems as configContactItems } from "@/config/contact";
 import { siteConfig } from "@/config/site";
 import { socialLinks as configSocialLinks } from "@/config/social";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { shouldUsePublicMockFallback } from "@/lib/supabase/env";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getPublicStorageUrl } from "@/lib/supabase/storage";
 import { SITE_ASSETS_BUCKET } from "@/lib/supabase/storage-constants";
@@ -22,7 +22,7 @@ function mapConfigSiteSettings(): SiteSettings {
 }
 
 export async function getPublicSiteSettings(): Promise<SiteSettings> {
-  if (!isSupabaseConfigured()) {
+  if (shouldUsePublicMockFallback("public site settings")) {
     return mapConfigSiteSettings();
   }
 
@@ -38,7 +38,7 @@ export async function getPublicSiteSettings(): Promise<SiteSettings> {
   }
 
   if (!data) {
-    return mapConfigSiteSettings();
+    throw new Error("Site settings row is missing in Supabase.");
   }
 
   return {
@@ -53,7 +53,7 @@ export async function getPublicSiteSettings(): Promise<SiteSettings> {
 }
 
 export async function getPublicContactItems(): Promise<ContactItem[]> {
-  if (!isSupabaseConfigured()) {
+  if (shouldUsePublicMockFallback("public contact items")) {
     return configContactItems;
   }
 
@@ -73,7 +73,7 @@ export async function getPublicContactItems(): Promise<ContactItem[]> {
 }
 
 export async function getPublicSocialLinks(): Promise<SocialLink[]> {
-  if (!isSupabaseConfigured()) {
+  if (shouldUsePublicMockFallback("public social links")) {
     return configSocialLinks;
   }
 
