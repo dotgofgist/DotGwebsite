@@ -36,6 +36,8 @@ pnpm run test:env
 pnpm run test:auth
 pnpm run test:admin
 pnpm run test:storage
+pnpm run e2e:preflight
+pnpm run test:e2e
 pnpm run env:check
 pnpm run env:check:production
 pnpm run storage:paths:check
@@ -47,6 +49,8 @@ pnpm run supabase:types
 ```
 
 `pnpm build` runs `scripts/check-env.ts` first. Local builds without Supabase are treated like production builds by `NODE_ENV=production`, so provide Supabase env values when building locally.
+
+Playwright E2E tests use the local Supabase stack by default and create disposable `e2e-*` fixtures. See `docs/e2e-testing.md` for browser installation, role fixtures, and remote-target safeguards.
 
 ## Data Policy
 
@@ -70,3 +74,4 @@ The database stores object paths. Public URLs are created when data is queried. 
 - `docs/authentication.md`
 - `docs/recruitment-management.md`
 - `docs/storage-management.md`
+- `docs/e2e-testing.md`

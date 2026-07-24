@@ -8,6 +8,7 @@ const requiredMigrations = [
   "20260723090000_add_recruitment_write_functions.sql",
   "20260724090000_add_public_image_storage.sql",
   "20260724120000_harden_admin_data_integrity.sql",
+  "20260724130000_grant_service_role_fixture_access.sql",
 ];
 const requiredTables = [
   "profiles",
@@ -82,6 +83,7 @@ const rlsMigration = readMigration(requiredMigrations[1]);
 const recruitmentRpcMigration = readMigration(requiredMigrations[2]);
 const storageMigration = readMigration(requiredMigrations[3]);
 const integrityMigration = readMigration(requiredMigrations[4]);
+const serviceRoleGrantMigration = readMigration(requiredMigrations[5]);
 
 includesAll(initialSchema, ["handle_new_user", "on_auth_user_created"], "profile auto-creation trigger");
 includesAll(
@@ -119,6 +121,11 @@ includesAll(
     "prevent_site_settings_delete",
   ],
   "admin data integrity constraints",
+);
+includesAll(
+  serviceRoleGrantMigration,
+  ["grant usage on schema public to service_role", "grant select, insert, update, delete on all tables"],
+  "service role fixture grants",
 );
 
 const developmentSeed = readFileSync("supabase/seed.sql", "utf8");
