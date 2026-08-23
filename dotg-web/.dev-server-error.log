@@ -1,0 +1,27 @@
+[DotG env] public site settings is using local mock/config fallback because Supabase is not fully configured. NEXT_PUBLIC_SUPABASE_URL is missing; NEXT_PUBLIC_SUPABASE_ANON_KEY is missing.
+⨯ Error: Supabase environment configuration is invalid: NEXT_PUBLIC_SUPABASE_URL is missing; NEXT_PUBLIC_SUPABASE_ANON_KEY is missing. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY. See .env.example and docs/environment-configuration.md.
+    at requireSupabasePublicEnv (src\lib\supabase\env.ts:174:11)
+    at createServerSupabaseClient (src\lib\supabase\server.ts:7:52)
+    at getProfiles (src\features\profiles\queries.ts:7:129)
+    at ProfilesPage (src\app\(public)\profiles\page.tsx:3:82)
+  172 |
+  173 |   if (!state.configured) {
+> 174 |     throw new Error(createSupabaseEnvErrorMessage());
+      |           ^
+  175 |   }
+  176 |
+  177 |   return state.env; {
+  digest: '3563799969'
+}
+[DotG env] public projects is using local mock/config fallback because Supabase is not fully configured. NEXT_PUBLIC_SUPABASE_URL is missing; NEXT_PUBLIC_SUPABASE_ANON_KEY is missing.
+[DotG env] public notices is using local mock/config fallback because Supabase is not fully configured. NEXT_PUBLIC_SUPABASE_URL is missing; NEXT_PUBLIC_SUPABASE_ANON_KEY is missing.
+[DotG env] public recruitment is using local mock/config fallback because Supabase is not fully configured. NEXT_PUBLIC_SUPABASE_URL is missing; NEXT_PUBLIC_SUPABASE_ANON_KEY is missing.
+[DotG env] public social links is using local mock/config fallback because Supabase is not fully configured. NEXT_PUBLIC_SUPABASE_URL is missing; NEXT_PUBLIC_SUPABASE_ANON_KEY is missing.
+[DotG env] public site settings is using local mock/config fallback because Supabase is not fully configured. NEXT_PUBLIC_SUPABASE_URL is missing; NEXT_PUBLIC_SUPABASE_ANON_KEY is missing.
+[DotG env] public profiles is using local mock/config fallback because Supabase is not fully configured. NEXT_PUBLIC_SUPABASE_URL is missing; NEXT_PUBLIC_SUPABASE_ANON_KEY is missing.
+[DotG env] public profile detail is using local mock/config fallback because Supabase is not fully configured. NEXT_PUBLIC_SUPABASE_URL is missing; NEXT_PUBLIC_SUPABASE_ANON_KEY is missing.
+[DotG env] public projects is using local mock/config fallback because Supabase is not fully configured. NEXT_PUBLIC_SUPABASE_URL is missing; NEXT_PUBLIC_SUPABASE_ANON_KEY is missing.
+[DotG env] public notices is using local mock/config fallback because Supabase is not fully configured. NEXT_PUBLIC_SUPABASE_URL is missing; NEXT_PUBLIC_SUPABASE_ANON_KEY is missing.
+[DotG env] public recruitment is using local mock/config fallback because Supabase is not fully configured. NEXT_PUBLIC_SUPABASE_URL is missing; NEXT_PUBLIC_SUPABASE_ANON_KEY is missing.
+[DotG env] public social links is using local mock/config fallback because Supabase is not fully configured. NEXT_PUBLIC_SUPABASE_URL is missing; NEXT_PUBLIC_SUPABASE_ANON_KEY is missing.
+[DotG env] public contact items is using local mock/config fallback because Supabase is not fully configured. NEXT_PUBLIC_SUPABASE_URL is missing; NEXT_PUBLIC_SUPABASE_ANON_KEY is missing.

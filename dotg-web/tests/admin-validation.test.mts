@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { validateNoticeFormData } from "../src/features/notices/validation.ts";
 import { validateProjectFormData } from "../src/features/projects/validation.ts";
+import { validateProfileFormData } from "../src/features/profiles/validation.ts";
 import {
   validateContactItemFormData,
   validateSiteSettingsFormData,
@@ -18,6 +19,16 @@ function form(entries: Record<string, string | boolean>): FormData {
 }
 
 describe("admin validation", () => {
+  it("normalizes profile slugs and skills", () => {
+    const result = validateProfileFormData(form({ name: "Doyun", slug: "DOYUN-KIM", position: "Developer", summary: "Intro", details: "Details", skills: "React, react, Supabase", isPublished: true }));
+    assert.equal(result.ok, true);
+    if (result.ok) { assert.equal(result.values.slug, "doyun-kim"); assert.deepEqual(result.values.skills, ["React", "Supabase"]); }
+  });
+
+  it("rejects unsafe profile links", () => {
+    const result = validateProfileFormData(form({ name: "Doyun", slug: "doyun", position: "Developer", summary: "Intro", details: "Details", websiteUrl: "javascript:alert(1)" }));
+    assert.equal(result.ok, false);
+  });
   it("normalizes project slug, tags, members, and duplicate links", () => {
     const result = validateProjectFormData(
       form({

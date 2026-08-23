@@ -1,0 +1,48 @@
+
+> dotg-web@0.1.0 dev C:\Users\doyun\Documents\GitHub\DotGwebsite\dotg-web
+> next dev
+
+▲ Next.js 16.2.11 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.117.10.86:3000
+✓ Ready in 11.8s
+Creating turbopack project {
+  dir: 'C:\\Users\\doyun\\Documents\\GitHub\\DotGwebsite\\dotg-web',
+  testMode: true
+}
+
+○ Compiling /profiles ...
+ GET / 200 in 576ms (next.js: 305ms, proxy.ts: 4ms, application-code: 267ms)
+✓ Compiled in 106ms
+ GET /profiles 200 in 328ms (next.js: 133ms, proxy.ts: 75ms, application-code: 120ms)
+ GET /profiles/doyun 200 in 1098ms (next.js: 1029ms, proxy.ts: 4ms, application-code: 66ms)
+ GET /profiles 200 in 315ms (next.js: 21ms, proxy.ts: 64ms, application-code: 231ms)
+ GET /manifest.webmanifest 200 in 1037ms (next.js: 982ms, proxy.ts: 19ms, application-code: 37ms)
+ GET /profiles/doyun 200 in 144ms (next.js: 47ms, proxy.ts: 18ms, application-code: 78ms)
+ GET /manifest.webmanifest 200 in 44ms (next.js: 10ms, proxy.ts: 14ms, application-code: 19ms)
+ GET /manifest.webmanifest 200 in 46ms (next.js: 12ms, proxy.ts: 14ms, application-code: 20ms)
+ GET /profiles/game-designer 200 in 143ms (next.js: 50ms, proxy.ts: 20ms, application-code: 74ms)
+ GET /manifest.webmanifest 200 in 40ms (next.js: 11ms, proxy.ts: 13ms, application-code: 16ms)
+ GET /manifest.webmanifest 200 in 43ms (next.js: 10ms, proxy.ts: 13ms, application-code: 20ms)
+ GET / 200 in 279ms (next.js: 52ms, proxy.ts: 19ms, application-code: 207ms)
+ GET /manifest.webmanifest 200 in 38ms (next.js: 10ms, proxy.ts: 12ms, application-code: 17ms)
+ GET /about 200 in 965ms (next.js: 826ms, proxy.ts: 8ms, application-code: 130ms)
+ GET /manifest.webmanifest 200 in 46ms (next.js: 10ms, proxy.ts: 14ms, application-code: 22ms)
+ GET /projects 200 in 924ms (next.js: 808ms, proxy.ts: 13ms, application-code: 103ms)
+ GET /manifest.webmanifest 200 in 35ms (next.js: 9ms, proxy.ts: 10ms, application-code: 15ms)
+ GET /profiles 200 in 125ms (next.js: 20ms, proxy.ts: 15ms, application-code: 90ms)
+ GET /manifest.webmanifest 200 in 31ms (next.js: 8ms, proxy.ts: 11ms, application-code: 13ms)
+ GET /recruitment 200 in 998ms (next.js: 878ms, proxy.ts: 12ms, application-code: 108ms)
+ GET /manifest.webmanifest 200 in 33ms (next.js: 9ms, proxy.ts: 10ms, application-code: 15ms)
+ GET /notices 200 in 1057ms (next.js: 956ms, proxy.ts: 17ms, application-code: 84ms)
+ GET /manifest.webmanifest 200 in 33ms (next.js: 9ms, proxy.ts: 13ms, application-code: 12ms)
+ GET /contact 200 in 881ms (next.js: 762ms, proxy.ts: 13ms, application-code: 106ms)
+ GET /manifest.webmanifest 200 in 56ms (next.js: 9ms, proxy.ts: 33ms, application-code: 14ms)
+ GET /profiles 200 in 102ms (next.js: 15ms, proxy.ts: 8ms, application-code: 79ms)
+ GET /manifest.webmanifest 200 in 38ms (next.js: 10ms, proxy.ts: 12ms, application-code: 16ms)
+ GET /admin/login 200 in 1082ms (next.js: 972ms, proxy.ts: 10ms, application-code: 100ms)
+ GET /manifest.webmanifest 200 in 39ms (next.js: 10ms, proxy.ts: 15ms, application-code: 15ms)
+ GET /about 200 in 493ms (next.js: 16ms, proxy.ts: 13ms, application-code: 464ms)
+ GET /manifest.webmanifest 200 in 106ms (next.js: 36ms, proxy.ts: 13ms, application-code: 57ms)
+ GET /admin/login 200 in 578ms (next.js: 80ms, proxy.ts: 47ms, application-code: 452ms)
+ GET /manifest.webmanifest 200 in 37ms (next.js: 13ms, proxy.ts: 10ms, application-code: 14ms)

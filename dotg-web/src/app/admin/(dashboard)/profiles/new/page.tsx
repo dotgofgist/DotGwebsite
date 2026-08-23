@@ -1,0 +1,1 @@
+import { ProfileForm } from "@/features/profiles/components/profile-form"; export default function NewProfilePage() { return <div><h1 className="mb-8 text-3xl font-bold">프로필 추가</h1><ProfileForm mode="create"/></div>; }

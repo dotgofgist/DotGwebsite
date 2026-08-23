@@ -1,0 +1,3 @@
+import { Container } from "@/components/ui/container"; import { SectionHeading } from "@/components/ui/section-heading"; import { ProfileCard } from "@/features/profiles/components/profile-card"; import { getProfiles } from "@/features/profiles/queries";
+export const metadata = { title: "프로필" };
+export default async function ProfilesPage() { const profiles = await getProfiles(); return <Container className="py-16"><SectionHeading title="DotG 프로필" description="DotG를 함께 만들어 가는 구성원을 소개합니다."/><div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{profiles.map((profile) => <ProfileCard key={profile.id} profile={profile}/>)}</div>{profiles.length === 0 && <p className="mt-10 text-neutral-500">등록된 공개 프로필이 없습니다.</p>}</Container>; }

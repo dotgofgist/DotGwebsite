@@ -50,6 +50,57 @@ export type Database = {
         }
         Relationships: []
       }
+      member_profiles: {
+        Row: {
+          created_at: string
+          details: string
+          github_url: string | null
+          id: string
+          image_url: string | null
+          is_published: boolean
+          name: string
+          position: string
+          skills: string[]
+          slug: string
+          sort_order: number
+          summary: string
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          details: string
+          github_url?: string | null
+          id?: string
+          image_url?: string | null
+          is_published?: boolean
+          name: string
+          position: string
+          skills?: string[]
+          slug: string
+          sort_order?: number
+          summary: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          details?: string
+          github_url?: string | null
+          id?: string
+          image_url?: string | null
+          is_published?: boolean
+          name?: string
+          position?: string
+          skills?: string[]
+          slug?: string
+          sort_order?: number
+          summary?: string
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       notices: {
         Row: {
           content: string
