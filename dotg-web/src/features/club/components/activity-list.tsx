@@ -2,32 +2,28 @@ import { Container } from "@/components/ui/container";
 
 const activities = [
   {
-    title: "아이디어 발굴과 게임 기획",
-    description: "핵심 재미, 규칙, 플레이 흐름을 말과 문서로 정리합니다.",
+    title: "게임잼",
+    description: "정해진 가이드라인 안에서 아이디어를 게임으로 구현하며 개발의 첫걸음을 내딛습니다.",
   },
   {
-    title: "프로토타입 제작",
-    description: "작은 범위로 빠르게 만들어 아이디어의 가능성을 확인합니다.",
+    title: "학기별 팀 프로젝트",
+    description: "자유롭게 팀을 이루어 한 학기 동안 원하는 게임을 꾸준히 기획하고 개발합니다.",
   },
   {
-    title: "프로그래밍",
-    description: "게임 로직, 화면 전환, 입력 처리처럼 실제 동작을 구현합니다.",
+    title: "게임 개발 스터디",
+    description: "선배와 동료가 함께 공부하며 Unity를 비롯한 게임 개발 지식을 쌓습니다.",
   },
   {
-    title: "그래픽 및 UI 제작",
-    description: "플레이어가 보고 조작하는 화면 요소를 제작하고 다듬습니다.",
+    title: "친목 행사",
+    description: "게임을 좋아한다는 공통 관심사를 바탕으로 다양한 주제의 활동을 함께 즐깁니다.",
   },
   {
-    title: "사운드 제작",
-    description: "상황에 맞는 효과음과 음악으로 게임의 감각을 보완합니다.",
+    title: "외부 게임잼과 대회",
+    description: "교외 행사와 대회에 참가해 새로운 사람들과 만나고 개발 경험의 폭을 넓힙니다.",
   },
   {
-    title: "테스트와 피드백",
-    description: "직접 플레이하며 문제를 찾고 개선 방향을 함께 논의합니다.",
-  },
-  {
-    title: "발표와 회고",
-    description: "결과물과 제작 과정을 공유하고 다음 프로젝트의 힌트를 얻습니다.",
+    title: "주간·학기말 성과 발표",
+    description: "각자의 완성품과 진행 과정을 소개하며 서로의 성장을 확인합니다.",
   },
 ];
 
@@ -38,11 +34,11 @@ export function ActivityList() {
         <div className="max-w-2xl space-y-3">
           <p className="text-sm font-semibold text-primary">주요 활동 분야</p>
           <h2 className="text-2xl font-semibold tracking-normal">
-            역할과 관심사에 따라 참여할 수 있습니다
+            제작과 배움, 교류와 도전을 함께합니다
           </h2>
           <p className="text-sm leading-7 text-neutral-600 dark:text-neutral-300">
-            한 사람이 모든 분야를 맡기보다, 관심 있는 영역을 중심으로 서로
-            배우고 연결하는 방식을 지향합니다.
+            기획, 프로그래밍, 디자인 등 각자의 관심 분야로 참여하고, 다양한
+            활동을 통해 함께 배우며 게임 개발 경험을 넓혀갑니다.
           </p>
         </div>
         <ul className="grid gap-3 md:grid-cols-2">

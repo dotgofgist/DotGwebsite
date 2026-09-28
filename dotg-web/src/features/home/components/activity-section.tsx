@@ -3,28 +3,28 @@ import { Container } from "@/components/ui/container";
 
 const activities = [
   {
-    title: "게임 기획",
-    description: "게임의 규칙, 플레이 경험, 레벨 구조를 설계합니다.",
+    title: "게임잼",
+    description: "가이드라인을 따라 나만의 게임 개발에 도전하며 첫걸음을 내딛습니다.",
   },
   {
-    title: "프로그래밍",
-    description: "프로토타입과 실제 플레이 가능한 기능을 구현합니다.",
+    title: "팀 게임 개발",
+    description: "자유롭게 팀을 구성해 학기 단위로 원하는 게임을 꾸준히 개발합니다.",
   },
   {
-    title: "그래픽 및 아트",
-    description: "캐릭터, 배경, UI처럼 화면에 보이는 요소를 다룹니다.",
+    title: "DotG 스터디",
+    description: "선배, 동기와 함께 공부하며 게임 개발에 필요한 지식을 쌓습니다.",
   },
   {
-    title: "사운드",
-    description: "효과음과 음악으로 게임의 분위기와 피드백을 설계합니다.",
+    title: "친목 행사",
+    description: "게임을 좋아하는 부원들이 다양한 주제로 함께 즐기며 가까워집니다.",
   },
   {
-    title: "팀 프로젝트",
-    description: "역할을 나누고 협업하며 하나의 결과물을 만들어 갑니다.",
+    title: "외부 행사 참가",
+    description: "외부 게임잼과 대회에 참가해 더 넓은 무대에서 경험을 쌓습니다.",
   },
   {
-    title: "게임잼 및 발표",
-    description: "짧은 제작 실험과 발표를 통해 피드백을 나눌 수 있습니다.",
+    title: "성과 발표",
+    description: "주간 및 학기말 발표에서 완성한 작품을 보여주고 서로의 성장을 확인합니다.",
   },
 ];
 
@@ -35,11 +35,11 @@ export function ActivitySection() {
         <div className="max-w-2xl space-y-3">
           <p className="text-sm font-semibold text-primary">주요 활동</p>
           <h2 className="text-2xl font-semibold tracking-normal sm:text-3xl">
-            게임 제작에 필요한 여러 영역을 다룹니다
+            만들고, 배우고, 함께 성장합니다
           </h2>
           <p className="text-sm leading-7 text-neutral-600 dark:text-neutral-300">
-            관심 분야에 따라 기획, 개발, 아트, 사운드, 발표와 피드백까지
-            다양한 제작 과정을 경험할 수 있습니다.
+            게임을 직접 만드는 경험부터 스터디, 교류, 외부 도전과 결과물
+            발표까지 다양한 활동을 함께합니다.
           </p>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

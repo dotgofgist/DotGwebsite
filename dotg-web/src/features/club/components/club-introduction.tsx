@@ -11,19 +11,21 @@ export function ClubIntroduction() {
             <div className="space-y-2">
               <p className="text-sm font-semibold text-primary">DotG 소개</p>
               <h2 className="text-2xl font-semibold tracking-normal">
-                함께 만드는 게임 제작 동아리
+                자유롭게 팀을 이뤄 게임을 만드는 동아리
               </h2>
             </div>
             <div className="space-y-4 text-sm leading-7 text-neutral-600 dark:text-neutral-300">
               <p>
-                {siteConfig.name}는 게임을 기획하고 개발하며 제작 경험을
-                공유하는 창작 동아리입니다. 하나의 게임은 기획, 프로그래밍,
-                그래픽, UI, 사운드처럼 여러 영역이 맞물릴 때 완성됩니다.
+                {siteConfig.name}는 게임을 좋아하는 사람들이 자유롭게 팀을
+                이루어 함께 게임을 만드는 동아리입니다. 기획, 프로그래밍,
+                디자인 등 분야와 경험에 관계없이 열정이 있는 누구나 서로
+                배우며 자신만의 아이디어를 실제 게임으로 발전시킬 수 있습니다.
               </p>
               <p>
-                결과물만큼 과정도 중요하게 바라봅니다. 아이디어가 어떤
-                시행착오를 거쳐 플레이 가능한 형태가 되는지 함께 기록하고
-                나누는 방향을 지향합니다.
+                학기 중 게임잼과 팀 프로젝트를 중심으로 꾸준히 개발하고,
+                스터디와 친목 활동으로 지식과 경험을 나눕니다. 외부 게임잼과
+                대회에도 도전하며, 주간 및 학기말 성과 발표를 통해 완성한
+                작품을 공유하고 서로의 성장을 확인합니다.
               </p>
             </div>
           </CardContent>

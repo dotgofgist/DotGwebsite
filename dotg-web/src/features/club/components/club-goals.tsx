@@ -2,10 +2,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
 
 const goals = [
-  "아이디어를 실제 플레이 가능한 결과물로 발전시키기",
-  "서로 다른 분야의 구성원이 협업하는 경험 쌓기",
-  "프로젝트 과정과 시행착오를 공유하기",
-  "완성된 결과물을 발표하고 피드백 받기",
+  "분야와 경험에 관계없이 게임 개발에 도전하기",
+  "선배와 동료에게 배우며 개발 지식 쌓기",
+  "팀과 함께 원하는 게임을 꾸준히 완성하기",
+  "완성한 작품을 공유하며 서로의 성장 확인하기",
 ];
 
 export function ClubGoals() {

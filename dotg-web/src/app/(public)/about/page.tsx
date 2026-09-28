@@ -25,8 +25,8 @@ export default function AboutPage() {
             동아리 소개
           </h1>
           <p className="max-w-2xl text-base leading-8 text-neutral-600 dark:text-neutral-300">
-            DotG는 게임 제작에 관심 있는 구성원이 아이디어를 나누고, 작은
-            실험부터 팀 프로젝트까지 함께 만들어 가는 창작 동아리입니다.
+            DotG는 기획, 프로그래밍, 디자인 등 다양한 분야의 구성원이
+            자유롭게 팀을 이루어 함께 배우고 게임을 만드는 동아리입니다.
           </p>
         </Container>
       </section>

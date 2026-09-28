@@ -16,9 +16,9 @@ export async function HeroSection() {
               {siteSettings.title}
             </p>
             <h1 className="max-w-3xl text-4xl font-semibold tracking-normal sm:text-5xl lg:text-6xl">
-              게임을 만들고
+              함께 배우고,
               <br />
-              경험을 함께 나눕니다.
+              자유롭게 만듭니다.
             </h1>
             <p className="max-w-2xl text-base leading-8 text-neutral-600 dark:text-neutral-300">
               {siteSettings.description}

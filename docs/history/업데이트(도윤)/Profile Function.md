@@ -97,6 +97,17 @@ The project already has a minimal `public.profiles` table connected one-to-one w
 
 ## Development Log
 
+### 2026-09-28
+
+- Updated the DotG website theme to use DotG Dark Orange (`#eb5a41`) as the primary brand color and DotG Light Orange (`#f8925a`) as the primary hover/accent color.
+- Applied the new theme tokens to primary buttons, focus indicators, and the web app manifest theme color.
+- Changed primary-button text to the dark foreground token so both orange states remain readable.
+- Added the official `DotG Logo.png` asset to the public site header alongside the club name.
+- Reused the supplied PNG as the browser favicon and Apple touch icon through the site metadata.
+- Rewrote the public club introduction from the 2026 Club Night presentation, emphasizing open multidisciplinary participation, collaborative learning, game jams, team projects, studies, community activities, external events, and project presentations.
+- Reviewed the supplied 2026 student-organization registration form; its public-introduction field was blank, so no unsupported claims were taken from the form.
+- Extended the document-based rewrite across the home hero, club summary, key activities, club goals, activity details, project flow, page metadata, and About page lead copy for a consistent public message.
+
 ### 2026-08-20
 
 - Read the existing project structure, feature boundaries, Supabase schema, authentication helpers, authorization documentation, and prior development history.

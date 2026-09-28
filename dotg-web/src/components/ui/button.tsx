@@ -11,7 +11,7 @@ type ButtonProps = ComponentPropsWithoutRef<"button"> & {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-primary !text-white hover:bg-[#4338ca] border-transparent disabled:bg-neutral-200 disabled:!text-neutral-700",
+    "bg-primary text-primary-foreground hover:bg-primary-light border-transparent disabled:bg-neutral-200 disabled:!text-neutral-700",
   secondary:
     "bg-surface text-foreground hover:bg-neutral-200 dark:hover:bg-neutral-800 border-border",
   ghost:

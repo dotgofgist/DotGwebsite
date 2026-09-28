@@ -15,18 +15,15 @@ export async function PublicHeader() {
           className="inline-flex min-h-10 min-w-0 items-center gap-2 rounded-md text-xl font-semibold tracking-normal"
           href="/"
         >
-          {siteSettings.logoUrl ? (
-            <Image
-              alt={siteSettings.name}
-              className="h-10 w-auto max-w-32 object-contain"
-              height={40}
-              priority
-              src={siteSettings.logoUrl}
-              width={128}
-            />
-          ) : (
-            siteSettings.name
-          )}
+          <Image
+            alt={`${siteSettings.name} logo`}
+            className="h-11 w-11 object-contain"
+            height={44}
+            priority
+            src="/dotg-logo.png"
+            width={44}
+          />
+          <span>{siteSettings.name}</span>
         </Link>
         <PublicDesktopNavigation />
         <MobileMenu />

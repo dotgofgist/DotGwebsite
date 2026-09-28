@@ -36,7 +36,8 @@ export const metadata: Metadata = {
     images: ["/opengraph-image"],
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: [{ url: "/dotg-logo.png", type: "image/png" }],
+    apple: [{ url: "/dotg-logo.png", type: "image/png" }],
   },
 };
 
