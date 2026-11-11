@@ -28,8 +28,8 @@ const envHelpMessage =
 
 const warnedFallbackScopes = new Set<string>();
 
-function readEnvValue(name: string): string | null {
-  const value = process.env[name]?.trim();
+function readEnvValue(rawValue: string | undefined): string | null {
+  const value = rawValue?.trim();
   return value && value.length > 0 ? value : null;
 }
 
@@ -54,8 +54,8 @@ function isHttpsRequiredForSupabaseUrl(url: URL): boolean {
 }
 
 export function getRuntimeEnvironment(): AppRuntimeEnvironment {
-  const vercelEnv = readEnvValue("VERCEL_ENV");
-  const publicVercelEnv = readEnvValue("NEXT_PUBLIC_VERCEL_ENV");
+  const vercelEnv = readEnvValue(process.env.VERCEL_ENV);
+  const publicVercelEnv = readEnvValue(process.env.NEXT_PUBLIC_VERCEL_ENV);
 
   if (vercelEnv === "production" || publicVercelEnv === "production") {
     return "production";
@@ -65,7 +65,7 @@ export function getRuntimeEnvironment(): AppRuntimeEnvironment {
     return "preview";
   }
 
-  if (readEnvValue("VERCEL") === "1") {
+  if (readEnvValue(process.env.VERCEL) === "1") {
     return "preview";
   }
 
@@ -77,7 +77,7 @@ export function getRuntimeEnvironment(): AppRuntimeEnvironment {
 }
 
 export function isVercelRuntime(): boolean {
-  return readEnvValue("VERCEL") === "1" || readEnvValue("VERCEL_ENV") !== null;
+  return readEnvValue(process.env.VERCEL) === "1" || readEnvValue(process.env.VERCEL_ENV) !== null;
 }
 
 export function isLocalRuntime(): boolean {
@@ -93,8 +93,9 @@ export function isProductionRuntime(): boolean {
 }
 
 export function getSupabaseEnvState(): SupabaseEnvState {
-  const url = readEnvValue("NEXT_PUBLIC_SUPABASE_URL");
-  const anonKey = readEnvValue("NEXT_PUBLIC_SUPABASE_ANON_KEY");
+  // Next.js only inlines public variables accessed with literal property names.
+  const url = readEnvValue(process.env.NEXT_PUBLIC_SUPABASE_URL);
+  const anonKey = readEnvValue(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
   const issues: SupabaseEnvIssue[] = [];
 
   if (!url) {
