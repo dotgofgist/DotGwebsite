@@ -111,22 +111,21 @@ Required GitHub `production` environment secrets:
 
 | Name | Public/Secret | Purpose |
 | --- | --- | --- |
-| `SUPABASE_ACCESS_TOKEN` | Secret | Supabase CLI auth |
-| `SUPABASE_PROJECT_REF_PRODUCTION` | Secret | Production Supabase project |
-| `SUPABASE_DB_PASSWORD_PRODUCTION` | Secret | Production DB migration auth |
+| `SUPABASE_DB_URL_PRODUCTION` | Secret | Production Supabase Session pooler connection string |
 | `VERCEL_TOKEN` | Secret | Vercel CLI auth |
 | `VERCEL_ORG_ID` | Secret | Vercel project scope |
 | `VERCEL_PROJECT_ID` | Secret | Vercel project id |
 
+In the production Supabase project's **Connect** dialog, copy the **Session pooler** connection string (port `5432`) for IPv4 access from GitHub Actions. Replace the password placeholder with the production database password, percent-encoding any reserved characters in the password, and save the full URL as `SUPABASE_DB_URL_PRODUCTION` in the GitHub `production` environment.
+
 The production workflow order is:
 
 1. Confirm branch is `main`.
-2. Link production Supabase.
-3. Run remote preflight.
-4. Apply migrations with `supabase db push`.
-5. Build Vercel production.
-6. Deploy production.
-7. Run read-only public smoke.
+2. Check local deployment files and list production migration history through the Session pooler.
+3. Apply migrations with `supabase db push` through the same connection.
+4. Build Vercel production.
+5. Deploy production.
+6. Run read-only public smoke.
 
 ## Rollback
 
