@@ -1,15 +1,31 @@
 # DotG Website
 
-DotG game creation club website built with Next.js App Router, React, TypeScript, Tailwind CSS, and Supabase Auth/Database/Storage.
+## 🚀 바로 실행하기
 
-## Local Development
+> **실행 후 브라우저에서 [http://localhost:3000](http://localhost:3000)을 여세요.**
+> Supabase 설정 없이도 공개 페이지를 샘플 데이터로 확인할 수 있습니다.
+
+**준비:** Node.js 22~24, pnpm 10이 필요합니다.
+
+**처음 실행할 때** — 저장소 루트(`DotGwebsite`)에서 아래 명령을 순서대로 실행하세요.
 
 ```powershell
+cd dotg-web
 pnpm install
 pnpm dev
 ```
 
-The development server runs at `http://localhost:3000` by default.
+이미 `dotg-web` 폴더에 있다면 `cd dotg-web`은 생략하세요.
+
+**다음부터 실행할 때** — `dotg-web` 폴더에서 `pnpm dev`만 실행하면 됩니다.
+
+- **종료:** 실행 중인 터미널에서 `Ctrl+C`를 누르세요.
+- **접속 주소:** 기본 주소는 `http://localhost:3000`이며, 포트가 사용 중이면 터미널에 표시된 `Local` 주소를 확인하세요.
+- **관리자 페이지 / 실제 데이터:** 아래 [Environment Variables](#environment-variables)의 Supabase 설정이 필요합니다. 관리자 페이지는 Supabase Auth 로그인도 필요합니다.
+
+---
+
+DotG game creation club website built with Next.js App Router, React, TypeScript, Tailwind CSS, and Supabase Auth/Database/Storage.
 
 Local development can run without Supabase environment variables. In that case, supported public pages use mock/config fallback data and print a warning once per query scope. Admin pages still require Supabase Auth and do not use mock fallback.
 
@@ -19,12 +35,12 @@ Copy `.env.example` to `.env.local` and fill in these values when connecting to 
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 ```
 
-Preview and Production deployments must set both variables in Vercel. Missing, partial, invalid, or non-HTTPS hosted Supabase URLs fail environment validation instead of falling back to mock data.
+Set both variables for Preview and Production in Vercel. Existing deployments can continue to use `NEXT_PUBLIC_SUPABASE_ANON_KEY` when the publishable variable is unset. Missing keys or invalid project URLs fail environment validation in these deployments.
 
-Do not add a service role key to this app. The browser client uses the anon key with Supabase RLS; privileged database access belongs outside the public Next.js bundle.
+The browser client uses the publishable key with Supabase RLS. Keep privileged database access outside the public Next.js bundle.
 
 ## Commands
 

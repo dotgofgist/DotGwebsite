@@ -71,6 +71,7 @@
     "supabase:types:remote": "node --experimental-strip-types scripts/generate-supabase-types.mts --remote"
   },
   "dependencies": {
+    "@next/env": "16.2.11",
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.8",
     "next": "16.2.11",

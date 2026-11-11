@@ -91,7 +91,7 @@ Configure Preview Supabase environment variables in Vercel, not in GitHub workfl
 
 ```text
 NEXT_PUBLIC_SUPABASE_URL
-NEXT_PUBLIC_SUPABASE_ANON_KEY
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 ```
 
 Preview smoke is read-only and checks public pages only. It does not log in, mutate content, upload images, or touch production data.

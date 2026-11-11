@@ -1,13 +1,13 @@
 export type SupabasePublicEnv = {
   url: string;
-  anonKey: string;
+  publicKey: string;
 };
 
 export type AppRuntimeEnvironment = "local" | "preview" | "production";
 
 export type SupabaseEnvIssue =
   | "missing-url"
-  | "missing-anon-key"
+  | "missing-public-key"
   | "invalid-url"
   | "insecure-url";
 
@@ -24,12 +24,12 @@ export type SupabaseEnvState =
     };
 
 const envHelpMessage =
-  "Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY. See .env.example and docs/environment-configuration.md.";
+  "Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY. See .env.example and docs/environment-configuration.md.";
 
 const warnedFallbackScopes = new Set<string>();
 
-function readEnvValue(name: string): string | null {
-  const value = process.env[name]?.trim();
+function readEnvValue(rawValue: string | undefined): string | null {
+  const value = rawValue?.trim();
   return value && value.length > 0 ? value : null;
 }
 
@@ -54,8 +54,8 @@ function isHttpsRequiredForSupabaseUrl(url: URL): boolean {
 }
 
 export function getRuntimeEnvironment(): AppRuntimeEnvironment {
-  const vercelEnv = readEnvValue("VERCEL_ENV");
-  const publicVercelEnv = readEnvValue("NEXT_PUBLIC_VERCEL_ENV");
+  const vercelEnv = readEnvValue(process.env.VERCEL_ENV);
+  const publicVercelEnv = readEnvValue(process.env.NEXT_PUBLIC_VERCEL_ENV);
 
   if (vercelEnv === "production" || publicVercelEnv === "production") {
     return "production";
@@ -65,7 +65,7 @@ export function getRuntimeEnvironment(): AppRuntimeEnvironment {
     return "preview";
   }
 
-  if (readEnvValue("VERCEL") === "1") {
+  if (readEnvValue(process.env.VERCEL) === "1") {
     return "preview";
   }
 
@@ -77,7 +77,7 @@ export function getRuntimeEnvironment(): AppRuntimeEnvironment {
 }
 
 export function isVercelRuntime(): boolean {
-  return readEnvValue("VERCEL") === "1" || readEnvValue("VERCEL_ENV") !== null;
+  return readEnvValue(process.env.VERCEL) === "1" || readEnvValue(process.env.VERCEL_ENV) !== null;
 }
 
 export function isLocalRuntime(): boolean {
@@ -93,16 +93,19 @@ export function isProductionRuntime(): boolean {
 }
 
 export function getSupabaseEnvState(): SupabaseEnvState {
-  const url = readEnvValue("NEXT_PUBLIC_SUPABASE_URL");
-  const anonKey = readEnvValue("NEXT_PUBLIC_SUPABASE_ANON_KEY");
+  // Next.js only inlines public variables accessed with literal property names.
+  const url = readEnvValue(process.env.NEXT_PUBLIC_SUPABASE_URL);
+  const publicKey =
+    readEnvValue(process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) ??
+    readEnvValue(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
   const issues: SupabaseEnvIssue[] = [];
 
   if (!url) {
     issues.push("missing-url");
   }
 
-  if (!anonKey) {
-    issues.push("missing-anon-key");
+  if (!publicKey) {
+    issues.push("missing-public-key");
   }
 
   if (url) {
@@ -115,7 +118,7 @@ export function getSupabaseEnvState(): SupabaseEnvState {
     }
   }
 
-  if (issues.length > 0 || !url || !anonKey) {
+  if (issues.length > 0 || !url || !publicKey) {
     return {
       configured: false,
       env: null,
@@ -127,7 +130,7 @@ export function getSupabaseEnvState(): SupabaseEnvState {
     configured: true,
     env: {
       url,
-      anonKey,
+      publicKey,
     },
     issues: [],
   };
@@ -142,7 +145,7 @@ export function getSupabasePublicEnv(): SupabasePublicEnv | null {
 function formatSupabaseEnvIssues(issues: SupabaseEnvIssue[]): string {
   const labels: Record<SupabaseEnvIssue, string> = {
     "missing-url": "NEXT_PUBLIC_SUPABASE_URL is missing",
-    "missing-anon-key": "NEXT_PUBLIC_SUPABASE_ANON_KEY is missing",
+    "missing-public-key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY is missing",
     "invalid-url": "NEXT_PUBLIC_SUPABASE_URL is not a valid URL",
     "insecure-url":
       "NEXT_PUBLIC_SUPABASE_URL must use HTTPS unless it points to local Supabase",

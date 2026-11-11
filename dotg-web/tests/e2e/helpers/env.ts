@@ -1,7 +1,7 @@
 export type E2EConfig = {
   baseURL: string;
   supabaseURL: string;
-  supabaseAnonKey?: string;
+  supabasePublicKey?: string;
   allowRemote: boolean;
   targetEnv: "local" | "preview" | "production";
   useWebServer: boolean;
@@ -42,8 +42,11 @@ export function getE2EConfig(): E2EConfig {
   return {
     baseURL,
     supabaseURL,
-    supabaseAnonKey:
-      read("E2E_SUPABASE_ANON_KEY") ?? read("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
+    supabasePublicKey:
+      read("E2E_SUPABASE_PUBLISHABLE_KEY") ??
+      read("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY") ??
+      read("E2E_SUPABASE_ANON_KEY") ??
+      read("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
     allowRemote,
     targetEnv,
     useWebServer: read("E2E_SKIP_WEBSERVER") !== "true",

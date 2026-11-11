@@ -1,3 +1,5 @@
+import nextEnv from "@next/env";
+import { fileURLToPath } from "node:url";
 import {
   assertSupabaseEnvForCurrentRuntime,
   createSupabaseEnvErrorMessage,
@@ -13,6 +15,10 @@ if (process.argv.includes("--production")) {
   setEnv("NODE_ENV", "production");
   setEnv("VERCEL_ENV", "production");
 }
+
+// Standalone Node scripts do not get Next.js's automatic .env file loading.
+const projectDir = fileURLToPath(new URL("../", import.meta.url));
+nextEnv.loadEnvConfig(projectDir, process.env.NODE_ENV !== "production");
 
 const runtime = getRuntimeEnvironment();
 const state = getSupabaseEnvState();

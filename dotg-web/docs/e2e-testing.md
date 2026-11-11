@@ -13,7 +13,7 @@ pnpm supabase start
 pnpm supabase db reset
 ```
 
-The E2E runner reads the local Supabase anon and service role keys from `pnpm supabase status`. Do not commit service role keys to `.env.local`.
+The E2E runner reads the local Supabase publishable key from `pnpm supabase status`, with the legacy anon key as a fallback. Test fixtures use the local service role key from the same command.
 
 ## Commands
 

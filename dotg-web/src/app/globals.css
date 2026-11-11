@@ -5,9 +5,8 @@
   --foreground: #171717;
   --surface: #f5f5f5;
   --border: #e5e5e5;
-  --primary: #eb5a41;
-  --primary-light: #f8925a;
-  --primary-foreground: #171717;
+  --primary: #e85e42;
+  --primary-foreground: #ffffff;
 }
 
 @theme inline {
@@ -16,7 +15,6 @@
   --color-surface: var(--surface);
   --color-border: var(--border);
   --color-primary: var(--primary);
-  --color-primary-light: var(--primary-light);
   --color-primary-foreground: var(--primary-foreground);
   --font-sans: Arial, Helvetica, sans-serif;
   --font-mono: "Courier New", Courier, monospace;

@@ -1,0 +1,16 @@
+
+> dotg-web@0.1.0 dev C:\Users\user\projects\DotGwebsite\dotg-web
+> next dev
+
+▲ Next.js 16.2.11 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.16.0.2:3000
+- Environments: .env.local
+✓ Ready in 6.2s
+Creating turbopack project {
+  dir: 'C:\\Users\\user\\projects\\DotGwebsite\\dotg-web',
+  testMode: true
+}
+
+[?25h
+ ELIFECYCLE  Command failed with exit code 1.
