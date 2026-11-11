@@ -2,14 +2,14 @@ import { spawn, spawnSync } from "node:child_process";
 
 const pnpmBin = process.platform === "win32" ? "pnpm.cmd" : "pnpm";
 
-function readLocalAnonKey(): string {
-  if (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  }
-
-  if (process.env.E2E_SUPABASE_ANON_KEY) {
-    return process.env.E2E_SUPABASE_ANON_KEY;
-  }
+function readLocalPublicKey(): string {
+  const configuredKey = [
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+    process.env.E2E_SUPABASE_PUBLISHABLE_KEY,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    process.env.E2E_SUPABASE_ANON_KEY,
+  ].find((key) => key?.trim());
+  if (configuredKey) return configuredKey;
 
   const command = process.platform === "win32" ? (process.env.ComSpec ?? "cmd.exe") : pnpmBin;
   const commandArgs =
@@ -29,8 +29,11 @@ function readLocalAnonKey(): string {
   if (result.status !== 0) return "";
 
   try {
-    const status = JSON.parse(result.stdout) as { ANON_KEY?: string };
-    return status.ANON_KEY ?? "";
+    const status = JSON.parse(result.stdout) as {
+      PUBLISHABLE_KEY?: string;
+      ANON_KEY?: string;
+    };
+    return status.PUBLISHABLE_KEY || status.ANON_KEY || "";
   } catch {
     return "";
   }
@@ -44,7 +47,7 @@ const child = spawn(command, commandArgs, {
     ...process.env,
     NEXT_PUBLIC_SUPABASE_URL:
       process.env.NEXT_PUBLIC_SUPABASE_URL ?? "http://127.0.0.1:54321",
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: readLocalAnonKey(),
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: readLocalPublicKey(),
   },
   shell: false,
   stdio: "inherit",

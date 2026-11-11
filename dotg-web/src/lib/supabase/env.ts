@@ -1,13 +1,13 @@
 export type SupabasePublicEnv = {
   url: string;
-  anonKey: string;
+  publicKey: string;
 };
 
 export type AppRuntimeEnvironment = "local" | "preview" | "production";
 
 export type SupabaseEnvIssue =
   | "missing-url"
-  | "missing-anon-key"
+  | "missing-public-key"
   | "invalid-url"
   | "insecure-url";
 
@@ -24,7 +24,7 @@ export type SupabaseEnvState =
     };
 
 const envHelpMessage =
-  "Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY. See .env.example and docs/environment-configuration.md.";
+  "Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY. See .env.example and docs/environment-configuration.md.";
 
 const warnedFallbackScopes = new Set<string>();
 
@@ -95,15 +95,17 @@ export function isProductionRuntime(): boolean {
 export function getSupabaseEnvState(): SupabaseEnvState {
   // Next.js only inlines public variables accessed with literal property names.
   const url = readEnvValue(process.env.NEXT_PUBLIC_SUPABASE_URL);
-  const anonKey = readEnvValue(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  const publicKey =
+    readEnvValue(process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) ??
+    readEnvValue(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
   const issues: SupabaseEnvIssue[] = [];
 
   if (!url) {
     issues.push("missing-url");
   }
 
-  if (!anonKey) {
-    issues.push("missing-anon-key");
+  if (!publicKey) {
+    issues.push("missing-public-key");
   }
 
   if (url) {
@@ -116,7 +118,7 @@ export function getSupabaseEnvState(): SupabaseEnvState {
     }
   }
 
-  if (issues.length > 0 || !url || !anonKey) {
+  if (issues.length > 0 || !url || !publicKey) {
     return {
       configured: false,
       env: null,
@@ -128,7 +130,7 @@ export function getSupabaseEnvState(): SupabaseEnvState {
     configured: true,
     env: {
       url,
-      anonKey,
+      publicKey,
     },
     issues: [],
   };
@@ -143,7 +145,7 @@ export function getSupabasePublicEnv(): SupabasePublicEnv | null {
 function formatSupabaseEnvIssues(issues: SupabaseEnvIssue[]): string {
   const labels: Record<SupabaseEnvIssue, string> = {
     "missing-url": "NEXT_PUBLIC_SUPABASE_URL is missing",
-    "missing-anon-key": "NEXT_PUBLIC_SUPABASE_ANON_KEY is missing",
+    "missing-public-key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY is missing",
     "invalid-url": "NEXT_PUBLIC_SUPABASE_URL is not a valid URL",
     "insecure-url":
       "NEXT_PUBLIC_SUPABASE_URL must use HTTPS unless it points to local Supabase",

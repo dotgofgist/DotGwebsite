@@ -67,14 +67,14 @@ describe("Supabase environment policy", () => {
     const state = getSupabaseEnvState();
 
     assert.equal(state.configured, false);
-    assert.deepEqual(state.issues, ["missing-anon-key"]);
+    assert.deepEqual(state.issues, ["missing-public-key"]);
     assert.equal(canUsePublicMockFallback(), true);
   });
 
-  it("detects a local anon-key-only partial configuration", () => {
+  it("detects a local publishable-key-only partial configuration", () => {
     clearManagedEnv();
     setEnv("NODE_ENV", "development");
-    setEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "anon-placeholder");
+    setEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "sb_publishable_example");
 
     const state = getSupabaseEnvState();
 
@@ -87,19 +87,19 @@ describe("Supabase environment policy", () => {
     clearManagedEnv();
     setEnv("NODE_ENV", "development");
     setEnv("NEXT_PUBLIC_SUPABASE_URL", "not-a-url");
-    setEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "   ");
+    setEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "   ");
 
     const state = getSupabaseEnvState();
 
     assert.equal(state.configured, false);
-    assert.deepEqual(state.issues, ["missing-anon-key", "invalid-url"]);
+    assert.deepEqual(state.issues, ["missing-public-key", "invalid-url"]);
   });
 
   it("requires HTTPS for non-local Supabase URLs", () => {
     clearManagedEnv();
     setEnv("NODE_ENV", "development");
     setEnv("NEXT_PUBLIC_SUPABASE_URL", "http://example.supabase.co");
-    setEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "anon-placeholder");
+    setEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "sb_publishable_example");
 
     const state = getSupabaseEnvState();
 
@@ -107,16 +107,23 @@ describe("Supabase environment policy", () => {
     assert.deepEqual(state.issues, ["insecure-url"]);
   });
 
-  it("does not accept the legacy publishable key variable as configured", () => {
+  it("uses the legacy anon key when the publishable key is blank", () => {
     clearManagedEnv();
     setEnv("NODE_ENV", "development");
     setEnv("NEXT_PUBLIC_SUPABASE_URL", "https://example.supabase.co");
-    setEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "legacy-placeholder");
+    setEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "   ");
+    setEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "legacy-placeholder");
 
-    const state = getSupabaseEnvState();
+    assert.equal(requireSupabasePublicEnv().publicKey, "legacy-placeholder");
+  });
 
-    assert.equal(state.configured, false);
-    assert.deepEqual(state.issues, ["missing-anon-key"]);
+  it("prefers the publishable key when both keys are configured", () => {
+    clearManagedEnv();
+    setEnv("NEXT_PUBLIC_SUPABASE_URL", "https://example.supabase.co");
+    setEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "legacy-placeholder");
+    setEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "sb_publishable_example");
+
+    assert.equal(requireSupabasePublicEnv().publicKey, "sb_publishable_example");
   });
 
   it("forbids preview fallback when Supabase is missing", () => {
@@ -150,17 +157,17 @@ describe("Supabase environment policy", () => {
     setEnv("NODE_ENV", "production");
     setEnv("VERCEL_ENV", "production");
     setEnv("NEXT_PUBLIC_SUPABASE_URL", "https://example.supabase.co");
-    setEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "anon-secret-like-value");
+    setEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "sb_publishable_example");
 
     assert.deepEqual(requireSupabasePublicEnv(), {
       url: "https://example.supabase.co",
-      anonKey: "anon-secret-like-value",
+      publicKey: "sb_publishable_example",
     });
 
     setEnv("NEXT_PUBLIC_SUPABASE_URL", "notaurl");
     const message = createSupabaseEnvErrorMessage();
 
     assert.match(message, /NEXT_PUBLIC_SUPABASE_URL/);
-    assert.doesNotMatch(message, /anon-secret-like-value/);
+    assert.doesNotMatch(message, /sb_publishable_example/);
   });
 });

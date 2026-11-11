@@ -25,7 +25,7 @@ Do not run production seed as part of a normal deployment.
 ### Site-Wide 500
 
 - Check Vercel deployment logs.
-- Check `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+- Check `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
 - Run production read-only smoke with `SMOKE_BASE_URL`.
 - Roll back the Vercel deployment if the migration is backward compatible.
 

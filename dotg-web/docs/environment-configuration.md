@@ -14,11 +14,11 @@ DotG separates three runtime environments:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 ```
 
 - `NEXT_PUBLIC_SUPABASE_URL`: Supabase project URL. Hosted projects must use HTTPS. Local Supabase CLI URLs such as `http://127.0.0.1:54321` are allowed.
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase anon public key used by the browser and server Supabase clients with RLS.
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` is the public key used by the browser and server Supabase clients with RLS. Existing deployments can use `NEXT_PUBLIC_SUPABASE_ANON_KEY` when the publishable variable is unset or blank.
 
 Both names are public by design because Supabase browser Auth needs them. Do not configure or request a service role key in this app.
 
@@ -48,7 +48,7 @@ pnpm run test:env
 
 ```powershell
 $env:NEXT_PUBLIC_SUPABASE_URL="http://127.0.0.1:54321"
-$env:NEXT_PUBLIC_SUPABASE_ANON_KEY="<local anon key from supabase status>"
+$env:NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="<local publishable key from supabase status>"
 pnpm build
 ```
 
@@ -70,7 +70,7 @@ Remove stale preview or production URLs when deployment domains change. Do not a
 ## Common Errors
 
 - Missing `NEXT_PUBLIC_SUPABASE_URL`: set the Supabase project URL in `.env.local` or Vercel.
-- Missing `NEXT_PUBLIC_SUPABASE_ANON_KEY`: set the anon public key, not the legacy publishable variable.
+- Missing `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` means the app found neither a publishable key nor a legacy anon key. Set the publishable key for the same Supabase project as the URL.
 - Invalid URL: include protocol and host, for example `https://project.supabase.co`.
 - Insecure hosted URL: use HTTPS for hosted Supabase. HTTP is only allowed for local Supabase CLI URLs.
 - Query error after env is configured: fix the database, RLS, network, or schema issue. The app intentionally does not switch to fallback data.

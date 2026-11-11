@@ -35,12 +35,12 @@ Copy `.env.example` to `.env.local` and fill in these values when connecting to 
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 ```
 
-Preview and Production deployments must set both variables in Vercel. Missing, partial, invalid, or non-HTTPS hosted Supabase URLs fail environment validation instead of falling back to mock data.
+Set both variables for Preview and Production in Vercel. Existing deployments can continue to use `NEXT_PUBLIC_SUPABASE_ANON_KEY` when the publishable variable is unset. Missing keys or invalid project URLs fail environment validation in these deployments.
 
-Do not add a service role key to this app. The browser client uses the anon key with Supabase RLS; privileged database access belongs outside the public Next.js bundle.
+The browser client uses the publishable key with Supabase RLS. Keep privileged database access outside the public Next.js bundle.
 
 ## Commands
 
