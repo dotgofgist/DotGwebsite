@@ -37,7 +37,7 @@ jobs:
           version: 10.25.0
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: dotg-web/.nvmrc
           cache: pnpm
@@ -62,7 +62,7 @@ jobs:
           version: 10.25.0
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: dotg-web/.nvmrc
           cache: pnpm
@@ -96,7 +96,7 @@ jobs:
           version: 10.25.0
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: dotg-web/.nvmrc
           cache: pnpm
@@ -125,7 +125,7 @@ jobs:
           version: 10.25.0
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: dotg-web/.nvmrc
           cache: pnpm
