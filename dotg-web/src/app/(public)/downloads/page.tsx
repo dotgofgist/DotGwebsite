@@ -38,23 +38,18 @@ export default function DownloadsPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [downloading, setDownloading] = useState<string | null>(null);
 
-  const loadFiles = useCallback(async () => {
-    setLoading(true);
-    setErrorMessage(null);
-
-    const { data, error } = await supabase.storage.from(DOWNLOADS_BUCKET).list("", {
+  const loadFiles = useCallback(() => {
+    return supabase.storage.from(DOWNLOADS_BUCKET).list("", {
       limit: 100,
       sortBy: { column: "created_at", order: "desc" },
-    });
-
-    if (error) {
+    }).then(({ data, error }) => {
+      if (error) throw error;
+      setErrorMessage(null);
+      setFiles((data ?? []).filter(file => file.name !== ".emptyFolderPlaceholder"));
+    }).catch(() => {
       setErrorMessage("자료 목록을 불러오지 못했습니다.");
       setFiles([]);
-    } else {
-      setFiles((data ?? []).filter((file) => file.name !== ".emptyFolderPlaceholder"));
-    }
-
-    setLoading(false);
+    }).finally(() => setLoading(false));
   }, [supabase]);
 
   useEffect(() => {

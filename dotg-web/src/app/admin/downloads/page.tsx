@@ -44,23 +44,18 @@ export default function AdminDownloadsPage() {
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  const loadFiles = useCallback(async () => {
-    setLoading(true);
-    setMessage(null);
-
-    const { data, error } = await supabase.storage.from(DOWNLOADS_BUCKET).list("", {
+  const loadFiles = useCallback(() => {
+    return supabase.storage.from(DOWNLOADS_BUCKET).list("", {
       limit: 100,
       sortBy: { column: "created_at", order: "desc" },
-    });
+    }).then(({ data, error }) => {
+      if (error) throw error;
 
-    if (error) {
-      setMessage(`파일 목록을 불러오지 못했습니다: ${error.message}`);
+      setFiles((data ?? []).filter(file => file.name !== ".emptyFolderPlaceholder"));
+    }).catch(() => {
+      setMessage("파일 목록을 불러오지 못했습니다.");
       setFiles([]);
-    } else {
-      setFiles((data ?? []).filter((file) => file.name !== ".emptyFolderPlaceholder"));
-    }
-
-    setLoading(false);
+    }).finally(() => setLoading(false));
   }, [supabase]);
 
   useEffect(() => {
@@ -177,7 +172,7 @@ export default function AdminDownloadsPage() {
           <h2 className="text-lg font-semibold">업로드된 파일</h2>
           <button
             className="rounded-md border border-border px-3 py-2 text-sm hover:bg-background"
-            onClick={() => void loadFiles()}
+            onClick={() => { setLoading(true); setMessage(null); void loadFiles(); }}
             type="button"
           >
             새로고침

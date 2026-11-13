@@ -12,7 +12,9 @@
 
 새 마이그레이션 `supabase/migrations/20261114090000_add_player_account_settings.sql`을 기존 마이그레이션 다음에 적용한 뒤 웹 앱을 배포해야 합니다. 이 파일에는 열·가입 트리거·사진 버킷과 RLS 정책·RPC 갱신이 포함됩니다. 기존 계정·친구 관계·게임 연결은 유지하며 추가 서비스 키는 필요하지 않습니다. 실제 배포는 이 저장소의 기존 Supabase/Vercel 절차를 사용합니다.
 
-이번 작업의 검증: 계정·게임·사진·권한 관련 Node/PGlite 테스트 36개, TypeScript 검사, Next.js 프로덕션 빌드 통과. 브라우저에서 가입·로그인 화면과 보호 경로의 로그인 이동을 확인했습니다. `tests/e2e/auth/player-accounts.spec.ts`에는 두 계정의 로그인·로그아웃, 사진 변경, 친구 요청·수락·삭제 시나리오를 추가했습니다. 로컬 Docker/Supabase가 실행되지 않아 이 통합 E2E와 실제 SMTP 인증 메일 전송은 실행하지 않았으며, 운영 DB 마이그레이션·웹 배포도 이 작업에서 수행하지 않았습니다.
+2026-11-14 검증: 정적 검사와 Node/PGlite 테스트 62개, 실제 PostgreSQL 권한 테스트 137개, DB 생성 타입 일치 검사를 통과했습니다. `tests/e2e/auth/player-accounts.spec.ts`는 로컬 Supabase를 사용해 데스크톱·모바일의 실제 가입, 이름·닉네임 분리 저장, 로그인·로그아웃, 사진 변경·복원, 친구 요청·수락·삭제와 이름 비공개를 검증합니다(세션 준비 포함 9개 통과). 실제 운영 SMTP 인증 메일 전송은 이 테스트에 포함하지 않습니다.
+
+운영 Supabase의 미적용 마이그레이션 5개를 `20261114090000`까지 적용했고 원격 이력 일치 및 읽기 전용 DB 검사 27개를 확인했습니다. 운영 웹 배포는 저장소의 `Production Deployment` 워크플로를 사용합니다. 배포 후 자동 smoke 검사는 기존 공개 화면뿐 아니라 가입·로그인·게임 화면, 설정·친구의 로그인 이동, 비로그인 계정 API 차단과 공개 방 목록을 확인합니다.
 
 인증·스토리지 API의 근거는 [Supabase 가입 API](https://supabase.com/docs/reference/javascript/auth-signup)와 [Storage 소유권 문서](https://supabase.com/docs/guides/storage/security/ownership)를 참고합니다.
 
@@ -22,14 +24,14 @@
 
 게임의 **웹 계정 연결**은 10분짜리 연결 코드를 표시한다. 로그인한 사용자가 자기 게임에 표시된 코드임을 확인하고 **연결 승인**을 누르면 12시간 동안 방 작업만 가능한 기기 권한이 생긴다. 웹 계정 비밀번호나 Supabase 토큰을 게임에 넘기지 않는다. 호스트의 맵·상태·실제 인원은 15초마다 갱신하며, 나가기/정상 종료 시 닫고 60초간 갱신이 없으면 목록과 코드 참여에서 제외한다.
 
-배포 시 `20261113110000_add_game_room_directory.sql`과 `20261113120000_add_eos_p2p_rooms.sql`을 순서대로 적용하고 Next.js 변경을 함께 배포해야 한다. 이 작업의 DB 검증은 격리된 PGlite에서 실행하며 운영 DB에는 적용하지 않는다. `tests/game-rooms.test.mts`는 연결 권한·방 소유권·공개 필드·서명·인원·차단·만료·EOS 주소를 검사한다.
+배포 시 `20261113110000_add_game_room_directory.sql`과 `20261113120000_add_eos_p2p_rooms.sql`을 순서대로 적용하고 Next.js 변경을 함께 배포해야 한다. 두 마이그레이션은 2026-11-14 운영 DB에 적용했다. `tests/game-rooms.test.mts`는 격리된 PGlite에서 연결 권한·방 소유권·공개 필드·서명·인원·차단·만료·EOS 주소를 검사한다.
 
 `/play`는 일반 사용자 로그인·가입·비밀번호 재설정, 게임 프로필, 친구 관계, 방 초대를 제공합니다. 관리자 로그인은 `/admin/login`을 그대로 사용합니다. 공개 동아리원 소개 카드(`member_profiles`)와 플레이어 프로필(`game_profiles`)은 서로 다릅니다.
 
 ## 배포 전에
 
 1. 새 마이그레이션 `supabase/migrations/20261113090000_add_game_social.sql`을 검토합니다. 기존 데이터 삭제나 관리자 권한 확대는 하지 않습니다.
-2. 연결할 Supabase 프로젝트를 확인하고 `pnpm exec supabase db push --dry-run`으로 적용 대상을 확인한 뒤 `pnpm exec supabase db push`로 적용합니다. 이 구현 작업에서는 운영 DB에 적용하지 않았습니다.
+2. 연결할 Supabase 프로젝트를 확인하고 `pnpm exec supabase db push --dry-run`으로 적용 대상을 확인한 뒤 `pnpm exec supabase db push`로 적용합니다. 2026-11-14에는 `20261114090000`까지 운영 적용을 확인했습니다.
 3. Supabase Auth의 Site URL을 실제 웹사이트 원본 주소로, Redirect URLs에 `https://실제-도메인/auth/callback**`를 설정합니다. 개발에서는 `http://localhost:3000/auth/callback**`도 허용합니다. Preview 도메인은 필요한 주소만 별도로 추가합니다.
 4. 일반 이메일 가입을 허용하고 이메일 인증 및 운영용 SMTP 설정을 확인합니다. 기본 Supabase 메일 서비스의 제한에 의존해 일반 사용자에게 출시하지 않습니다.
 5. 기본 PKCE 메일 링크는 `/auth/callback?code=...`로 돌아옵니다. 다른 브라우저에서도 링크를 열어야 하면 Supabase 메일 템플릿을 `{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=signup` 형태로 변경할 수 있습니다. 비밀번호 복구 템플릿은 `type=recovery`를 사용합니다.

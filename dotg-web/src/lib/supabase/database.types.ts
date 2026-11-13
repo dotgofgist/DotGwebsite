@@ -7,11 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.5"
-  }
   public: {
     Tables: {
       contact_items: {
@@ -104,15 +99,15 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "game_friendships_requester_fkey"
-            columns: ["requester"]
+            foreignKeyName: "game_friendships_recipient_fkey"
+            columns: ["recipient"]
             isOneToOne: false
             referencedRelation: "game_profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "game_friendships_recipient_fkey"
-            columns: ["recipient"]
+            foreignKeyName: "game_friendships_requester_fkey"
+            columns: ["requester"]
             isOneToOne: false
             referencedRelation: "game_profiles"
             referencedColumns: ["id"]
@@ -143,17 +138,17 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "game_invites_session_id_fkey"
-            columns: ["session_id"]
-            isOneToOne: false
-            referencedRelation: "game_sessions"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "game_invites_recipient_fkey"
             columns: ["recipient"]
             isOneToOne: false
             referencedRelation: "game_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_invites_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "game_sessions"
             referencedColumns: ["id"]
           },
         ]
@@ -192,8 +187,7 @@ export type Database = {
           real_name?: string
           updated_at?: string
         }
-        Relationships: [
-        ]
+        Relationships: []
       }
       game_sessions: {
         Row: {
@@ -691,19 +685,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_manage_content: { Args: never; Returns: boolean }
       can_manage_player_avatar: {
         Args: { object_name: string; require_unused?: boolean }
         Returns: boolean
       }
-      game_rooms: {
-        Args: { action: string; payload?: Json }
-        Returns: Json
-      }
-      game_social: {
-        Args: { action: string; payload?: Json }
-        Returns: Json
-      }
-      can_manage_content: { Args: never; Returns: boolean }
       create_recruitment: {
         Args: {
           p_activities: string[]
@@ -724,6 +710,8 @@ export type Database = {
         }
         Returns: string
       }
+      game_rooms: { Args: { action: string; payload?: Json }; Returns: Json }
+      game_social: { Args: { action: string; payload?: Json }; Returns: Json }
       is_admin: { Args: never; Returns: boolean }
       save_recruitment: {
         Args: {

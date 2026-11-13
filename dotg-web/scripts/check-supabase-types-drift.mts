@@ -38,16 +38,16 @@ if (result.status !== 0) {
   process.exit(result.status ?? 1);
 }
 
-const generated = result.stdout.trimStart();
+const generated = result.stdout.replace(/\r\n/g, "\n").trim() + "\n";
 
 if (!generated.startsWith("export type Json")) {
   console.error("[DotG Supabase] Generated types did not look like TypeScript output.");
   process.exit(1);
 }
 
-const current = readFileSync(target, "utf8");
+const current = readFileSync(target, "utf8").replace(/\r\n/g, "\n").trim() + "\n";
 
-if (current !== result.stdout) {
+if (current !== generated) {
   console.error("[DotG Supabase] database.types.ts is out of date.");
   console.error("Run: pnpm run supabase:types");
   console.error(`Commit the updated ${target}.`);

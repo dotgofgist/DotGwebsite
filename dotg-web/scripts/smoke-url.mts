@@ -11,6 +11,10 @@ const publicRoutes = [
   "/recruitment",
   "/notices",
   "/contact",
+  "/downloads",
+  "/play",
+  "/signup",
+  "/login",
   "/admin/login",
   "/robots.txt",
   "/sitemap.xml",
@@ -54,5 +58,23 @@ for (const route of publicRoutes) {
 
   console.log(`[DotG smoke] PASS ${target.pathname} (${response.status})`);
 }
+
+for (const route of ["/account", "/friends"]) {
+  const response = await fetch(new URL(route, url), { redirect: "manual" });
+  const location = response.headers.get("location");
+  const destination = location ? new URL(location, url) : null;
+  if (response.status < 300 || response.status >= 400 || destination?.pathname !== "/login" || destination.searchParams.get("next") !== route) {
+    fail(`${route} did not redirect an unauthenticated visitor to login with its return path.`);
+  }
+  console.log(`[DotG smoke] PASS ${route} (protected)`);
+}
+
+const social = await fetch(new URL("/api/game/social", url));
+if (social.status !== 401) fail(`/api/game/social returned ${social.status} instead of 401.`);
+console.log("[DotG smoke] PASS /api/game/social (authentication required)");
+
+const rooms = await fetch(new URL("/api/game/rooms", url));
+if (!rooms.ok || !Array.isArray((await rooms.json()).rooms)) fail("/api/game/rooms did not return a public room list.");
+console.log("[DotG smoke] PASS /api/game/rooms (public room list)");
 
 console.log(`[DotG smoke] ${mode} smoke passed for ${url.origin}.`);

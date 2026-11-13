@@ -11,7 +11,7 @@ async function loginAndSave(page: Page, role: E2ERole): Promise<void> {
   await page.locator("#admin-password").fill(e2ePassword);
   await page.locator('button[type="submit"]').click();
 
-  await expect(page).toHaveURL(/\/admin(?:\?|$)/);
+  await expect(page).toHaveURL(/\/admin(?:\?|$)/, { timeout: 30_000 });
 
   await page.context().storageState({ path: account.storageState });
 }

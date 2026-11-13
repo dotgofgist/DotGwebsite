@@ -44,18 +44,18 @@ try {
     throw new Error(`Supabase ${mode} type generation failed.`);
   }
 
-  const output = result.stdout.trimStart();
+  const output = result.stdout.replace(/\r\n/g, "\n").trim() + "\n";
 
   if (!output.startsWith("export type Json")) {
     process.exitCode = 1;
     throw new Error("Generated Supabase types did not look like TypeScript output; existing file was left untouched.");
   }
 
-  writeFileSync(tempFile, result.stdout);
+  writeFileSync(tempFile, output);
 
   const previous = readFileSync(target, "utf8");
 
-  if (previous === result.stdout) {
+  if (previous === output) {
     console.log(`[DotG Supabase] ${mode} types are already up to date.`);
   } else {
     renameSync(tempFile, target);

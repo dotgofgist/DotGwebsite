@@ -1,6 +1,8 @@
 import sharp from "sharp";
+import { randomUUID } from "node:crypto";
 import { test, expect } from "../fixtures.ts";
 import { e2eAccounts, e2ePassword } from "../helpers/accounts.ts";
+import { getSupabaseAdminClient } from "../helpers/supabase-admin.ts";
 
 test("signup separates name and nickname and retains values after password mismatch", async ({ page }) => {
   await page.goto("/signup");
@@ -11,9 +13,44 @@ test("signup separates name and nickname and retains values after password misma
   await page.getByLabel("비밀번호", { exact: true }).fill("mismatch-one-123");
   await page.locator('input[name="password_confirm"]').fill("mismatch-two-123");
   await page.getByRole("button", { name: "가입하기", exact: true }).click();
-  await expect(page.getByRole("alert")).toHaveText("비밀번호가 서로 일치하지 않습니다.");
+  await expect(page.getByRole("main").getByRole("alert")).toHaveText("비밀번호가 서로 일치하지 않습니다.");
   await expect(page.locator('input[name="real_name"]')).toHaveValue("테스트 이름");
   await expect(page.locator('input[name="display_name"]')).toHaveValue("테스트 닉네임");
+});
+
+test("signup creates a profile with a private name and a separate nickname", async ({ page }) => {
+  const handle = `e2e_${randomUUID().replaceAll("-", "").slice(0, 12)}`;
+  const email = `${handle}@example.test`;
+  const admin = getSupabaseAdminClient();
+  try {
+    await page.goto("/signup");
+    await page.locator('input[name="real_name"]').fill("가입 테스트 이름");
+    await page.locator('input[name="display_name"]').fill("가입 테스트 닉네임");
+    await page.locator('input[name="handle"]').fill(handle);
+    await page.getByLabel("이메일", { exact: true }).fill(email);
+    await page.getByLabel("비밀번호", { exact: true }).fill(e2ePassword);
+    await page.locator('input[name="password_confirm"]').fill(e2ePassword);
+    await page.getByRole("button", { name: "가입하기", exact: true }).click();
+    await expect(page).toHaveURL(/\/account$/);
+    await expect(page.locator('input[name="real_name"]')).toHaveValue("가입 테스트 이름");
+    await expect(page.locator('input[name="display_name"]')).toHaveValue("가입 테스트 닉네임");
+    await expect(page.locator('input[name="handle"]')).toHaveValue(handle);
+    await page.getByRole("navigation", { name: "계정 메뉴" }).getByRole("button", { name: "로그아웃", exact: true }).click();
+    await page.goto("/login");
+    await page.getByLabel("이메일", { exact: true }).fill(email);
+    await page.getByLabel("비밀번호", { exact: true }).fill(e2ePassword);
+    await page.getByRole("button", { name: "로그인", exact: true }).click();
+    await expect(page).toHaveURL(/\/account$/);
+    await expect(page.locator('input[name="display_name"]')).toHaveValue("가입 테스트 닉네임");
+  } finally {
+    const { data, error } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+    if (error) throw error;
+    const user = data.users.find(candidate => candidate.email === email);
+    if (user) {
+      const { error: deleteError } = await admin.auth.admin.deleteUser(user.id);
+      if (deleteError) throw deleteError;
+    }
+  }
 });
 
 test("player login returns to the requested page and logout protects it again", async ({ page }) => {

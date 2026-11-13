@@ -9,14 +9,16 @@ export function RoomList({ signedIn, connectionCode = "" }: { signedIn: boolean;
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
-  const refresh = useCallback(async (signal?: AbortSignal) => {
-    try {
-      const response = await fetch("/api/game/rooms", { cache: "no-store", signal });
+  const refresh = useCallback((signal?: AbortSignal) => {
+    return fetch("/api/game/rooms", { cache: "no-store", signal }).then(async response => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
+      return data;
+    }).then(data => {
+      if (signal?.aborted) return;
       setRooms(data.rooms); setError("");
-    } catch (e) { if (!signal?.aborted) { setRooms([]); setError(e instanceof Error ? e.message : "목록을 불러오지 못했습니다."); } }
-    finally { if (!signal?.aborted) setLoading(false); }
+    }).catch(e => { if (!signal?.aborted) { setRooms([]); setError(e instanceof Error ? e.message : "목록을 불러오지 못했습니다."); } })
+      .finally(() => { if (!signal?.aborted) setLoading(false); });
   }, []);
   useEffect(() => {
     const controller = new AbortController();

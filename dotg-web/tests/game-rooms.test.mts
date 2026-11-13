@@ -4,7 +4,19 @@ import { readFileSync } from "node:fs";
 import { createHmac } from "node:crypto";
 import { PGlite } from "@electric-sql/pglite";
 import { pgcrypto } from "@electric-sql/pglite/contrib/pgcrypto";
-import { validateRoomRequest } from "../src/features/game-social/rooms.ts";
+import { validateRoomRequest, type ListedRoom } from "../src/features/game-social/rooms.ts";
+
+type SessionBundle = { address: string; transport: string; mode: string };
+type RoomResponses = {
+  link_begin: { token: string; code: string };
+  link_status: { connected: boolean; display_name: string | null };
+  link_approve: { ok: boolean };
+  list: { rooms: (ListedRoom & Record<string, unknown>)[] };
+  create: { code: string; session: SessionBundle & { host_key: string } };
+  join: { session: SessionBundle & { ticket: string; host_key?: never } };
+  heartbeat: { ok: boolean };
+  close: { ok: boolean };
+};
 
 test("room requests validate codes, endpoints, fields and player bounds", () => {
   assert.equal(validateRoomRequest({action:"join",payload:{code:"ab12-34ef"}}).payload.code,"AB1234EF");
@@ -27,11 +39,11 @@ test("live directory pairs devices, binds host ownership, signs joins and expire
     }
     await db.query("insert into auth.users(id) values($1),($2)",[alice,bob]);
     await db.query("insert into public.game_profiles(id,handle,display_name) values($1,'alice','방장'),($2,'bob','참가자')",[alice,bob]);
-    async function call(action:string,payload:Record<string,string>={},user=""):Promise<Record<string,any>> {
+    async function call<Action extends keyof RoomResponses>(action:Action,payload:Record<string,string>={},user=""):Promise<RoomResponses[Action]> {
       await db.exec(`begin; set local role ${user?"authenticated":"anon"}`);
       try {
         await db.query("select set_config('request.jwt.claim.sub',$1,true)",[user]);
-        const result=await db.query<{value:Record<string,any>}>("select public.game_rooms($1,$2::jsonb) as value",[action,JSON.stringify(payload)]);
+        const result=await db.query<{value:RoomResponses[Action]}>("select public.game_rooms($1,$2::jsonb) as value",[action,JSON.stringify(payload)]);
         await db.exec("commit");return result.rows[0].value;
       }catch(e){await db.exec("rollback");throw e;}
     }
