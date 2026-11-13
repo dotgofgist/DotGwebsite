@@ -1,7 +1,8 @@
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const handle = /^[a-z0-9_]{3,24}$/;
 const fields: Record<string, readonly string[]> = {
-  save_profile: ["handle", "display_name", "bio", "avatar"],
+  save_profile: ["handle", "real_name", "display_name", "bio", "avatar"],
+  search_players: ["query"],
   request_friend: ["handle"], block_user: ["handle"], unblock_user: ["user_id"],
   accept_friend: ["id"], remove_friend: ["id"],
   create_room: ["title", "endpoint"], close_room: ["session_id"],
@@ -27,10 +28,12 @@ export function validateSocialRequest(value: unknown): { action: string; payload
     if (!handle.test(result.handle)) throw new Error("사용자 ID는 영문 소문자·숫자·밑줄 3~24자입니다.");
   }
   if (action === "save_profile") {
+    if (!result.real_name || [...result.real_name].length > 50 || /[\p{Cc}]/u.test(result.real_name)) throw new Error("이름은 제어문자 없이 1~50자로 입력해 주세요.");
     if (!result.display_name || [...result.display_name].length > 32 || /[\p{Cc}]/u.test(result.display_name)) throw new Error("닉네임은 제어문자 없이 1~32자로 입력해 주세요.");
     if ([...result.bio].length > 240) throw new Error("소개는 240자 이내로 입력해 주세요.");
     if (!["coral", "mint", "blue", "violet"].includes(result.avatar)) throw new Error("프로필 색상을 선택해 주세요.");
   }
+  if (action === "search_players" && ([...result.query].length < 2 || [...result.query].length > 32 || /[\p{Cc}]/u.test(result.query))) throw new Error("사용자 ID 또는 닉네임을 2~32자로 입력해 주세요.");
   if (action === "create_room") {
     if (!result.title || [...result.title].length > 60) throw new Error("방 이름은 1~60자로 입력해 주세요.");
     if (result.endpoint.startsWith("eos:")) {
@@ -47,5 +50,5 @@ export function validateSocialRequest(value: unknown): { action: string; payload
 }
 
 export function safePlayerReturnPath(value: string | null): string {
-  return value === "/play/password" ? value : "/play";
+  return ["/play/password", "/account", "/friends"].includes(value ?? "") ? value! : "/play";
 }

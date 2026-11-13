@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { safePlayerReturnPath, validateSocialRequest } from "../src/features/game-social/validation.ts";
 test("player cannot inject roles or identities through profile payloads", () => {
-  const result = validateSocialRequest({ action: "save_profile", payload: { handle: "Friend_1", display_name: "친구", bio: "안녕", avatar: "mint", role: "admin", id: "attacker" } });
-  assert.deepEqual(result.payload, { handle: "friend_1", display_name: "친구", bio: "안녕", avatar: "mint" });
+  const result = validateSocialRequest({ action: "save_profile", payload: { handle: "Friend_1", real_name: " 김이름 ", display_name: "친구", bio: "안녕", avatar: "mint", role: "admin", id: "attacker", avatar_path: "foreign/photo.webp" } });
+  assert.deepEqual(result.payload, { handle: "friend_1", real_name: "김이름", display_name: "친구", bio: "안녕", avatar: "mint" });
 });
 test("mutations reject invalid targets, endpoints and inherited action names", () => {
   for (const input of [
@@ -26,5 +26,16 @@ test("EOS room codes are validated and canonicalized without accepting arbitrary
 });
 test("email callbacks only return to player routes", () => {
   assert.equal(safePlayerReturnPath("/play/password"), "/play/password");
+  assert.equal(safePlayerReturnPath("/account"), "/account");
+  assert.equal(safePlayerReturnPath("/friends"), "/friends");
   for (const path of [null, "//evil.test", "https://evil.test", "/admin", "/play/../admin"]) assert.equal(safePlayerReturnPath(path), "/play");
+});
+
+test("name and nickname are independent and search terms are bounded literals", () => {
+  for (const real_name of ["", " ", "a\nname", "가".repeat(51)]) {
+    assert.throws(() => validateSocialRequest({ action: "save_profile", payload: { handle: "tester", real_name, display_name: "닉네임", bio: "", avatar: "coral" } }));
+  }
+  for (const query of ["a", " ", "가".repeat(33), "a\nb"]) assert.throws(() => validateSocialRequest({ action: "search_players", payload: { query } }));
+  assert.equal(validateSocialRequest({ action: "search_players", payload: { query: " test_% " } }).payload.query, "test_%");
+  assert.throws(() => validateSocialRequest({ action: "set_avatar", payload: { path: "another-user/photo.webp" } }));
 });

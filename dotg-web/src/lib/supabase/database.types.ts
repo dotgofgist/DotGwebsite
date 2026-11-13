@@ -161,29 +161,35 @@ export type Database = {
       game_profiles: {
         Row: {
           avatar: string
+          avatar_path: string | null
           bio: string
           created_at: string
           display_name: string
           handle: string
           id: string
+          real_name: string
           updated_at: string
         }
         Insert: {
           avatar?: string
+          avatar_path?: string | null
           bio?: string
           created_at?: string
           display_name: string
           handle: string
           id: string
+          real_name?: string
           updated_at?: string
         }
         Update: {
           avatar?: string
+          avatar_path?: string | null
           bio?: string
           created_at?: string
           display_name?: string
           handle?: string
           id?: string
+          real_name?: string
           updated_at?: string
         }
         Relationships: [
@@ -685,6 +691,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_manage_player_avatar: {
+        Args: { object_name: string; require_unused?: boolean }
+        Returns: boolean
+      }
       game_rooms: {
         Args: { action: string; payload?: Json }
         Returns: Json

@@ -7,7 +7,7 @@ export const publicNavigation: readonly NavigationItem[] = [
   { label: "홈", href: "/" },
   { label: "동아리 소개", href: "/about" },
   { label: "프로젝트", href: "/projects" },
-  { label: "프로필", href: "/profiles" },
+  { label: "동아리원", href: "/profiles" },
   { label: "모집 안내", href: "/recruitment" },
   { label: "공지사항", href: "/notices" },
   { label: "연락처", href: "/contact" },
