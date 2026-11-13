@@ -106,7 +106,23 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build application
-        run: pnpm run ci:build
+        run: |
+          pnpm exec supabase start > /dev/null
+          node --input-type=module <<'NODE'
+          import { execFileSync, spawnSync } from 'node:child_process';
+          const status = JSON.parse(execFileSync('pnpm', ['exec', 'supabase', 'status', '--output', 'json'], { encoding: 'utf8' }));
+          if (!status.API_URL || !status.ANON_KEY) throw new Error('Local Supabase public configuration is missing.');
+          const result = spawnSync('pnpm', ['run', 'ci:build'], {
+            stdio: 'inherit',
+            env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: status.API_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: status.ANON_KEY },
+          });
+          if (result.error) throw result.error;
+          process.exit(result.status ?? 1);
+          NODE
+
+      - name: Stop local Supabase
+        if: always()
+        run: pnpm supabase stop --no-backup
 
   playwright-e2e:
     name: Playwright E2E
