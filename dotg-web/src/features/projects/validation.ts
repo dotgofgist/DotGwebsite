@@ -1,3 +1,4 @@
+import { parseProjectTrailerUrl } from "./trailer.ts";
 import type {
   ContentStatus,
   ProjectLinkType,
@@ -12,6 +13,7 @@ export type ProjectActionState = {
     slug?: string;
     summary?: string;
     description?: string;
+    trailerUrl?: string;
     status?: string;
     publicationStatus?: string;
     tags?: string;
@@ -43,6 +45,7 @@ export type ProjectFormValues = {
   slug: string;
   summary: string;
   description: string;
+  trailerUrl?: string;
   status: ProjectStatus;
   publicationStatus: ContentStatus;
   tags: string[];
@@ -155,6 +158,8 @@ export function validateProjectFormData(formData: FormData):
   const slug = readString(formData, "slug").trim().toLowerCase();
   const summary = readString(formData, "summary").trim();
   const description = readString(formData, "description").trim();
+  const trailerUrl = readString(formData, "trailerUrl").trim();
+  const trailer = parseProjectTrailerUrl(trailerUrl);
   const status = readString(formData, "status") as ProjectStatus;
   const publicationStatus = readString(formData, "publicationStatus") as ContentStatus;
   const featured = formData.get("featured") === "on";
@@ -179,6 +184,9 @@ export function validateProjectFormData(formData: FormData):
     fieldErrors.description = "Description must be 1-5000 characters.";
   }
   if (!projectStatuses.has(status)) fieldErrors.status = "Choose a valid project status.";
+  if (trailerUrl && !trailer) {
+    fieldErrors.trailerUrl = "YouTube 영상 링크 또는 HTTPS로 시작하는 MP4·WebM 영상 주소를 입력해 주세요.";
+  }
   if (!contentStatuses.has(publicationStatus)) {
     fieldErrors.publicationStatus = "Choose a valid publication status.";
   }
@@ -228,6 +236,7 @@ export function validateProjectFormData(formData: FormData):
       slug,
       summary,
       description,
+      trailerUrl: trailer?.url,
       status,
       publicationStatus,
       tags,

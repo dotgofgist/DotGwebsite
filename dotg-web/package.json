@@ -16,7 +16,8 @@
     "lint": "eslint",
     "test:env": "node --experimental-strip-types --test tests/env-policy.test.mts",
     "test:auth": "node --experimental-strip-types --test tests/auth-policy.test.mts",
-    "test:admin": "node --experimental-strip-types --test tests/admin-validation.test.mts",
+    "test:game-social": "node --experimental-strip-types --test tests/game-social.test.mts tests/game-social-database.test.mts",
+    "test:admin": "node --experimental-strip-types --test tests/admin-validation.test.mts tests/project-trailer.test.mts",
     "test:storage": "node --experimental-strip-types --test tests/storage-integrity.test.mts",
     "test:supabase": "node --experimental-strip-types --test tests/supabase-deployment.test.mts",
     "e2e:preflight": "node --experimental-strip-types tests/e2e/helpers/preflight.ts",
@@ -80,6 +81,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
+    "@electric-sql/pglite": "0.5.16",
     "@playwright/test": "^1.61.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",

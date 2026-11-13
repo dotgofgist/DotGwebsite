@@ -12,6 +12,7 @@ export const publicNavigation: readonly NavigationItem[] = [
   { label: "공지사항", href: "/notices" },
   { label: "연락처", href: "/contact" },
   { label: "자료실", href: "/downloads" },
+  { label: "플레이어 라운지", href: "/play" },
 ] as const;
 
 export const adminNavigation: readonly NavigationItem[] = [

@@ -35,6 +35,7 @@ function buildProjectPayload(
     slug: values.slug,
     summary: values.summary,
     description: values.description,
+    trailer_url: values.trailerUrl ?? null,
     status: values.status,
     publication_status: values.publicationStatus,
     tags: values.tags,

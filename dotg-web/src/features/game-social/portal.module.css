@@ -1,0 +1,43 @@
+.portal { --action-background: #bd432b; --action-foreground: #ffffff; --accent-text: #ad3e29; max-width: 1120px; margin: 0 auto; padding: 48px 24px 80px; }
+.heading { margin-bottom: 32px; }
+.heading > span { color: var(--accent-text); letter-spacing: .12em; font-size: 12px; font-weight: 700; }
+.heading h1 { font-size: clamp(28px,4vw,42px); font-weight: 750; margin: 8px 0; }
+.heading p, .card > p, .muted { opacity: .72; font-size: 14px; line-height: 1.7; }
+.grid { display: grid; grid-template-columns: 320px minmax(0,1fr); gap: 24px; align-items: start; }
+.stack { display: grid; gap: 24px; }
+.card { border: 1px solid var(--border); border-radius: 18px; padding: 24px; background: var(--background); min-width: 0; }
+.card h2 { font-size: 19px; font-weight: 700; margin-bottom: 12px; }
+.card h3 { font-weight: 650; margin: 20px 0 8px; }
+.form { display: grid; gap: 14px; margin: 16px 0; }
+.portal label { display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
+.portal input, .portal textarea, .portal select { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; background: var(--background); font-weight: 400; }
+.portal textarea { min-height: 82px; resize: vertical; }
+.portal button { background: var(--action-background); color: var(--action-foreground); border: 1px solid transparent; border-radius: 8px; padding: 9px 14px; font-size: 14px; font-weight: 650; }
+.portal button:disabled { opacity: .5; }
+.portal .secondary { background: var(--surface); color: var(--foreground); border-color: var(--border); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.toolbar { display: flex; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; }
+.notice { border-left: 3px solid var(--primary); background: var(--surface); padding: 14px 16px; border-radius: 6px; margin-bottom: 24px; font-size: 14px; }
+.list { display: grid; gap: 12px; }
+.item { background: var(--surface); border-radius: 12px; padding: 16px; display: grid; gap: 10px; }
+.identity { display: flex; gap: 12px; align-items: center; overflow-wrap: anywhere; }
+.identity small { display: block; opacity: .7; }
+.avatar { width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; flex-shrink: 0; color: #17202c; font-size: 20px; font-weight: 700; background: #ffb7a6; }
+.avatar[data-color=mint] { background: #9de5ce; }
+.avatar[data-color=blue] { background: #acd4ff; }
+.avatar[data-color=violet] { background: #d5bfff; }
+.empty { padding: 16px 0; opacity: .7; font-size: 14px; }
+.roomDirectory { margin-bottom: 24px; }
+.roomDirectory summary { cursor: pointer; font-size: 14px; font-weight: 650; margin-bottom: 12px; }
+.roomTableWrap { overflow-x: auto; }
+.roomTable { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; text-align: left; }
+.roomTable caption { text-align: left; padding-bottom: 12px; }
+.roomTable th, .roomTable td { padding: 14px 10px; border-bottom: 1px solid var(--border); }
+.roomTable th { font-size: 12px; white-space: nowrap; }
+.roomTable td:first-child { min-width: 150px; overflow-wrap: anywhere; }
+.roomTable td:not(:first-child) { white-space: nowrap; }
+.roomTable small { display: block; margin-top: 4px; opacity: .7; }
+.roomTable code { font-size: 13px; letter-spacing: .05em; }
+.row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 8px; align-items: end; margin: 12px 0; }
+@media(max-width:760px) { .grid { grid-template-columns: 1fr; } .portal { padding: 28px 16px 56px; } .card { padding: 20px; } }
+@media(prefers-color-scheme:dark) { .portal { --action-background: #ff947a; --action-foreground: #171717; --accent-text: #ff947a; } }

@@ -36,6 +36,14 @@ New projects default to `planning` and `draft`.
 
 Allowed link types are `github`, `website`, `download`, `youtube`, `steam`, and `itchio`.
 
+## Project Trailers
+
+The optional **트레일러 영상 URL** field on the create/edit form accepts HTTPS YouTube video links (`watch`, `youtu.be`, `shorts`, `live`, or `embed`) and direct `.mp4`/`.webm` URLs, including query strings. The form previews supported URLs before saving. YouTube links are normalized to a watch URL and rendered using the privacy-enhanced embed host. Other external links remain separate.
+
+The public detail page shows a responsive player below the introduction, with playback controls, no autoplay, and a link to open the video in a new tab. Clearing the field and saving removes the trailer. Projects without a trailer keep their existing layout. Video files must already be hosted; this field does not upload files.
+
+Apply `supabase/migrations/20261113100000_add_project_trailer.sql` before deploying the application changes. It adds nullable `projects.trailer_url` without changing existing records or RLS. Public and admin queries map it to `Project.trailerUrl`.
+
 ## Slugs
 
 Slugs are normalized to lowercase and must use English letters, numbers, and single hyphens:

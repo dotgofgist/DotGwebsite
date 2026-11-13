@@ -23,6 +23,7 @@ const projectListColumns = `
   summary,
   description,
   thumbnail_path,
+  trailer_url,
   status,
   publication_status,
   tags,

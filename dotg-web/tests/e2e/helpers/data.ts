@@ -65,7 +65,7 @@ export async function setE2EAccountRole(
 export async function getProjectBySlug(slug: string) {
   return getSupabaseAdminClient()
     .from("projects")
-    .select("id, slug, title, publication_status")
+    .select("id, slug, title, publication_status, trailer_url")
     .eq("slug", slug)
     .maybeSingle();
 }

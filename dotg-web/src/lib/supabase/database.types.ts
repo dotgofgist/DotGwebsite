@@ -50,6 +50,186 @@ export type Database = {
         }
         Relationships: []
       }
+      game_blocks: {
+        Row: {
+          owner_id: string
+          target_id: string
+        }
+        Insert: {
+          owner_id: string
+          target_id: string
+        }
+        Update: {
+          owner_id?: string
+          target_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_blocks_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "game_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_blocks_target_id_fkey"
+            columns: ["target_id"]
+            isOneToOne: false
+            referencedRelation: "game_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_friendships: {
+        Row: {
+          created_at: string
+          id: string
+          recipient: string
+          requester: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          recipient: string
+          requester: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          recipient?: string
+          requester?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_friendships_requester_fkey"
+            columns: ["requester"]
+            isOneToOne: false
+            referencedRelation: "game_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_friendships_recipient_fkey"
+            columns: ["recipient"]
+            isOneToOne: false
+            referencedRelation: "game_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_invites: {
+        Row: {
+          expires_at: string
+          id: string
+          recipient: string
+          session_id: string
+          status: string
+        }
+        Insert: {
+          expires_at?: string
+          id?: string
+          recipient: string
+          session_id: string
+          status?: string
+        }
+        Update: {
+          expires_at?: string
+          id?: string
+          recipient?: string
+          session_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_invites_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "game_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_invites_recipient_fkey"
+            columns: ["recipient"]
+            isOneToOne: false
+            referencedRelation: "game_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_profiles: {
+        Row: {
+          avatar: string
+          bio: string
+          created_at: string
+          display_name: string
+          handle: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar?: string
+          bio?: string
+          created_at?: string
+          display_name: string
+          handle: string
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar?: string
+          bio?: string
+          created_at?: string
+          display_name?: string
+          handle?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: [
+        ]
+      }
+      game_sessions: {
+        Row: {
+          closed_at: string | null
+          created_at: string
+          endpoint: string
+          expires_at: string
+          host_id: string
+          id: string
+          title: string
+          transport: string
+        }
+        Insert: {
+          closed_at?: string | null
+          created_at?: string
+          endpoint: string
+          expires_at?: string
+          host_id: string
+          id?: string
+          title: string
+          transport?: string
+        }
+        Update: {
+          closed_at?: string | null
+          created_at?: string
+          endpoint?: string
+          expires_at?: string
+          host_id?: string
+          id?: string
+          title?: string
+          transport?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_sessions_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "game_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       member_profiles: {
         Row: {
           created_at: string
@@ -267,6 +447,7 @@ export type Database = {
           tags: string[]
           thumbnail_path: string | null
           title: string
+          trailer_url: string | null
           updated_at: string
           updated_by: string | null
         }
@@ -287,6 +468,7 @@ export type Database = {
           tags?: string[]
           thumbnail_path?: string | null
           title: string
+          trailer_url?: string | null
           updated_at?: string
           updated_by?: string | null
         }
@@ -307,6 +489,7 @@ export type Database = {
           tags?: string[]
           thumbnail_path?: string | null
           title?: string
+          trailer_url?: string | null
           updated_at?: string
           updated_by?: string | null
         }
@@ -502,6 +685,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      game_rooms: {
+        Args: { action: string; payload?: Json }
+        Returns: Json
+      }
+      game_social: {
+        Args: { action: string; payload?: Json }
+        Returns: Json
+      }
       can_manage_content: { Args: never; Returns: boolean }
       create_recruitment: {
         Args: {

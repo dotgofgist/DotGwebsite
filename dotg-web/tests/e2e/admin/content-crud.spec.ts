@@ -17,6 +17,8 @@ test.describe("editor content CRUD", () => {
     await page.locator("#project-slug").fill(slug);
     await page.locator("#project-summary").fill("E2E project summary");
     await page.locator("#project-description").fill("E2E project description");
+    await page.locator("#project-trailer-url").fill("https://youtu.be/M7lc1UVf-VE");
+    await expect(page.locator('iframe[title="프로젝트 트레일러"]')).toHaveAttribute("src", "https://www.youtube-nocookie.com/embed/M7lc1UVf-VE");
     await page.locator("#project-publication-status").selectOption("published");
     await page.locator("#project-tags").fill("E2E, Playwright, e2e");
     await page.locator("#project-members").fill("E2E Tester|QA");
@@ -30,8 +32,17 @@ test.describe("editor content CRUD", () => {
     expect(row.error).toBeNull();
     expect(row.data?.title).toBe("E2E Project");
     expect(row.data?.publication_status).toBe("published");
+    expect(row.data?.trailer_url).toBe("https://www.youtube.com/watch?v=M7lc1UVf-VE");
+    await expect(page.locator("#project-trailer-url")).toHaveValue("https://www.youtube.com/watch?v=M7lc1UVf-VE");
+
+    const editUrl = page.url();
+    await page.goto(`/projects/${slug}`);
+    await expect(page.getByRole("heading", { name: "트레일러", exact: true })).toBeVisible();
+    await expect(page.locator('iframe[title="E2E Project 트레일러"]')).toHaveAttribute("src", "https://www.youtube-nocookie.com/embed/M7lc1UVf-VE");
+    await page.goto(editUrl);
 
     await page.locator("#project-title").fill("E2E Project Updated");
+    await page.locator("#project-trailer-url").fill("https://e2e.example/trailer.webm");
     await page.getByRole("button", { name: "프로젝트 저장" }).click();
     await expect(page).toHaveURL(/\/admin\/projects\/[0-9a-f-]+\/edit\?saved=1/, {
       timeout: 20_000,
@@ -40,6 +51,16 @@ test.describe("editor content CRUD", () => {
     const updatedRow = await getProjectBySlug(slug);
     expect(updatedRow.error).toBeNull();
     expect(updatedRow.data?.title).toBe("E2E Project Updated");
+    expect(updatedRow.data?.trailer_url).toBe("https://e2e.example/trailer.webm");
+    await page.goto(`/projects/${slug}`);
+    await expect(page.locator("video")).toHaveAttribute("src", "https://e2e.example/trailer.webm");
+    await page.goto(editUrl);
+    await page.locator("#project-trailer-url").fill("");
+    await page.getByRole("button", { name: "프로젝트 저장" }).click();
+    await expect(page).toHaveURL(/\?saved=1/, { timeout: 20_000 });
+    expect((await getProjectBySlug(slug)).data?.trailer_url).toBeNull();
+    await page.goto(`/projects/${slug}`);
+    await expect(page.getByRole("heading", { name: "트레일러", exact: true })).toHaveCount(0);
   });
 
   test("creates a notice and verifies the database row", async ({ page }) => {

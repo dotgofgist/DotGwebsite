@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { createProjectAction, updateProjectAction } from "../actions";
 import type { AdminProject } from "../types";
 import type { ProjectActionState } from "../validation";
+import { parseProjectTrailerUrl } from "../trailer";
 import { ProjectSubmitButton } from "./project-submit-button";
+import { ProjectTrailer } from "./project-trailer";
 
 type ProjectFormProps = {
   initialProject?: AdminProject;
@@ -27,6 +29,7 @@ function dateValue(value: string | undefined): string {
 export function ProjectForm({ initialProject, mode }: ProjectFormProps) {
   const action = mode === "create" ? createProjectAction : updateProjectAction;
   const [state, formAction] = useActionState(action, initialState);
+  const [trailerUrl, setTrailerUrl] = useState(initialProject?.trailerUrl ?? "");
   const tagValue = initialProject?.tags.join(", ") ?? "";
   const memberValue =
     initialProject?.members
@@ -62,6 +65,31 @@ export function ProjectForm({ initialProject, mode }: ProjectFormProps) {
       <FormField error={state.fieldErrors?.description} htmlFor="project-description" label="상세 설명" required>
         <Textarea id="project-description" name="description" required defaultValue={initialProject?.description ?? ""} />
       </FormField>
+
+      <FormField
+        description="YouTube 링크 또는 HTTPS MP4·WebM 영상 주소를 입력하세요. 비워 두고 저장하면 트레일러가 표시되지 않습니다."
+        error={state.fieldErrors?.trailerUrl}
+        htmlFor="project-trailer-url"
+        label="트레일러 영상 URL (선택)"
+      >
+        <Input
+          aria-describedby={`project-trailer-url-description${state.fieldErrors?.trailerUrl ? " project-trailer-url-error" : ""}`}
+          aria-invalid={Boolean(state.fieldErrors?.trailerUrl)}
+          id="project-trailer-url"
+          maxLength={2048}
+          name="trailerUrl"
+          onChange={(event) => setTrailerUrl(event.target.value)}
+          placeholder="https://www.youtube.com/watch?v=…"
+          type="url"
+          value={trailerUrl}
+        />
+      </FormField>
+      {parseProjectTrailerUrl(trailerUrl) ? (
+        <div className="max-w-2xl space-y-3">
+          <p className="text-sm font-medium">트레일러 미리보기</p>
+          <ProjectTrailer url={trailerUrl} title={initialProject?.title ?? "프로젝트"} poster={initialProject?.thumbnailUrl} />
+        </div>
+      ) : null}
 
       <div className="grid gap-4 md:grid-cols-3">
         <FormField error={state.fieldErrors?.status} htmlFor="project-status" label="개발 상태">

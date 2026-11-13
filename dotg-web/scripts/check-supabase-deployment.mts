@@ -9,6 +9,11 @@ const requiredMigrations = [
   "20260724090000_add_public_image_storage.sql",
   "20260724120000_harden_admin_data_integrity.sql",
   "20260724130000_grant_service_role_fixture_access.sql",
+  "20260820090000_add_member_profiles.sql",
+  "20260823000100_add_download_storage.sql",
+  "20261113090000_add_game_social.sql",
+  "20261113100000_add_project_trailer.sql",
+  "20261113110000_add_game_room_directory.sql",
 ];
 const requiredTables = [
   "profiles",

@@ -29,6 +29,7 @@ export type Project = {
   summary: string;
   description: string;
   thumbnailUrl?: string;
+  trailerUrl?: string;
   status: ProjectStatus;
   tags: string[];
   featured: boolean;

@@ -5,8 +5,10 @@ import { buttonClasses } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
 import type { Project } from "../types";
+import { parseProjectTrailerUrl } from "../trailer";
 import { ProjectLinks } from "./project-links";
 import { ProjectStatusBadge } from "./project-status-badge";
+import { ProjectTrailer } from "./project-trailer";
 
 type ProjectDetailProps = {
   project: Project;
@@ -106,6 +108,15 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
               {project.description}
             </p>
           </section>
+
+          {project.trailerUrl && parseProjectTrailerUrl(project.trailerUrl) ? (
+            <section aria-labelledby="project-trailer-heading" className="space-y-4">
+              <h2 className="text-2xl font-semibold tracking-normal" id="project-trailer-heading">
+                트레일러
+              </h2>
+              <ProjectTrailer url={project.trailerUrl} title={project.title} poster={project.thumbnailUrl} />
+            </section>
+          ) : null}
 
           {project.members.length > 0 ? (
             <section className="space-y-4">

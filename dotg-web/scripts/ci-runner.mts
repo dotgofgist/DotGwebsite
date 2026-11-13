@@ -8,6 +8,7 @@ const commandSets: Record<string, string[][]> = {
     ["pnpm", "exec", "tsc", "--noEmit"],
     ["pnpm", "run", "test:env"],
     ["pnpm", "run", "test:auth"],
+    ["pnpm", "run", "test:game-social"],
     ["pnpm", "run", "test:admin"],
     ["pnpm", "run", "test:storage"],
     ["pnpm", "run", "test:supabase"],

@@ -39,6 +39,7 @@ export function mapProjectRowToAdminProject(
     title: row.title,
     summary: row.summary,
     description: row.description,
+    trailerUrl: row.trailer_url ?? undefined,
     thumbnailUrl,
     thumbnailPath: row.thumbnail_path ?? undefined,
     status: row.status,
