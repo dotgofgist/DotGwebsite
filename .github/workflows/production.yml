@@ -96,7 +96,8 @@ jobs:
 
       - name: Read-only production smoke
         env:
-          SMOKE_BASE_URL: ${{ steps.deploy.outputs.production-url }}
+          # Immutable deployment URLs can require Vercel SSO; check the public production alias.
+          SMOKE_BASE_URL: ${{ vars.PRODUCTION_SITE_URL || 'https://dotg-web.vercel.app' }}
           SMOKE_ALLOW_PRODUCTION: "true"
         run: pnpm run smoke:production
 
@@ -106,5 +107,6 @@ jobs:
           echo "- Reason: ${{ inputs.deploy_reason }}" >> "$GITHUB_STEP_SUMMARY"
           echo "- Commit: ${{ github.sha }}" >> "$GITHUB_STEP_SUMMARY"
           echo "- URL: ${{ steps.deploy.outputs.production-url }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Public site: ${{ vars.PRODUCTION_SITE_URL || 'https://dotg-web.vercel.app' }}" >> "$GITHUB_STEP_SUMMARY"
           echo "- Migrations: applied with supabase db push" >> "$GITHUB_STEP_SUMMARY"
           echo "- Smoke: passed" >> "$GITHUB_STEP_SUMMARY"

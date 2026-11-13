@@ -61,6 +61,7 @@ for (const route of publicRoutes) {
 
 for (const route of ["/account", "/friends"]) {
   const response = await fetch(new URL(route, url), { redirect: "manual" });
+  await response.body?.cancel();
   const location = response.headers.get("location");
   const destination = location ? new URL(location, url) : null;
   if (response.status < 300 || response.status >= 400 || destination?.pathname !== "/login" || destination.searchParams.get("next") !== route) {
@@ -70,6 +71,7 @@ for (const route of ["/account", "/friends"]) {
 }
 
 const social = await fetch(new URL("/api/game/social", url));
+await social.body?.cancel();
 if (social.status !== 401) fail(`/api/game/social returned ${social.status} instead of 401.`);
 console.log("[DotG smoke] PASS /api/game/social (authentication required)");
 
