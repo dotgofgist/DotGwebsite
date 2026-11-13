@@ -30,7 +30,7 @@ declare
   room public.game_sessions;
   player public.game_profiles;
   secret_token text;
-  token_hash text;
+  requested_hash text;
   public_code text;
   secret_key text;
   ticket_payload text;
@@ -73,8 +73,8 @@ begin
   end if;
 
   if payload ? 'token' then
-    token_hash := encode(extensions.digest(payload->>'token','sha256'),'hex');
-    select * into device from game_private.game_devices d where d.token_hash=game_rooms.token_hash and d.expires_at>now();
+    requested_hash := encode(extensions.digest(payload->>'token','sha256'),'hex');
+    select * into device from game_private.game_devices d where d.token_hash=requested_hash and d.expires_at>now();
     if not found then raise exception '게임 계정을 다시 연결해 주세요.' using errcode='28000'; end if;
     me := device.user_id;
   end if;

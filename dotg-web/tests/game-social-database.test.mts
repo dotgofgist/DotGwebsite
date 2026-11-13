@@ -20,7 +20,7 @@ test("Postgres enforces player identity, friendship consent, blocking and signed
       create function auth.uid() returns uuid language sql stable as
       $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
     `);
-    for (const name of ["20260723073310_create_initial_content_schema.sql", "20260723073320_add_initial_rls_policies.sql", "20261113090000_add_game_social.sql"]) {
+    for (const name of ["20260723073310_create_initial_content_schema.sql", "20260723073320_add_initial_rls_policies.sql", "20261113090000_add_game_social.sql", "20261113110000_add_game_room_directory.sql", "20261113120000_add_eos_p2p_rooms.sql"]) {
       await db.exec(readFileSync(`supabase/migrations/${name}`, "utf8"));
     }
     await db.query("insert into auth.users(id) values($1),($2),($3)", [a,b,c]);

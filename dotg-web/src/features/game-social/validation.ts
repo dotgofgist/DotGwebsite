@@ -33,6 +33,12 @@ export function validateSocialRequest(value: unknown): { action: string; payload
   }
   if (action === "create_room") {
     if (!result.title || [...result.title].length > 60) throw new Error("방 이름은 1~60자로 입력해 주세요.");
+    if (result.endpoint.startsWith("eos:")) {
+      const room = /^eos:([0-9a-f]{32}):([0-9a-f]{32})$/i.exec(result.endpoint);
+      if (!room || room[1] === "0".repeat(32) || room[2] === "0".repeat(32)) throw new Error("게임에서 F6으로 복사한 EOS 방 코드를 붙여 넣어 주세요.");
+      result.endpoint = result.endpoint.toLowerCase();
+      return { action, payload: result };
+    }
     const endpoint = /^([a-zA-Z0-9.-]+|\[[0-9a-fA-F:]+\]):([0-9]{1,5})$/.exec(result.endpoint);
     if (!endpoint || result.endpoint.length > 260 || Number(endpoint[2]) < 1 || Number(endpoint[2]) > 65535) throw new Error("접속 주소와 포트를 확인해 주세요. 예: 192.168.0.10:28080");
     if (["0.0.0.0", "[::]"].includes(endpoint[1])) throw new Error("다른 PC가 접속할 수 있는 호스트 주소를 입력해 주세요.");

@@ -17,6 +17,13 @@ test("mutations reject invalid targets, endpoints and inherited action names", (
 test("valid IPv4 and IPv6 room addresses survive validation", () => {
   for (const endpoint of ["192.168.1.2:28080", "[::1]:28080"]) assert.equal(validateSocialRequest({ action: "create_room", payload: { title: "방", endpoint } }).payload.endpoint, endpoint);
 });
+test("EOS room codes are validated and canonicalized without accepting arbitrary identities", () => {
+  const endpoint = `eos:${"A".repeat(32)}:${"b".repeat(32)}`;
+  assert.equal(validateSocialRequest({ action: "create_room", payload: { title: "EOS 방", endpoint } }).payload.endpoint, endpoint.toLowerCase());
+  for (const invalid of ["eos:user:room", `${endpoint}:extra`, `eos:${"0".repeat(32)}:${"b".repeat(32)}`]) {
+    assert.throws(() => validateSocialRequest({ action: "create_room", payload: { title: "EOS 방", endpoint: invalid } }));
+  }
+});
 test("email callbacks only return to player routes", () => {
   assert.equal(safePlayerReturnPath("/play/password"), "/play/password");
   for (const path of [null, "//evil.test", "https://evil.test", "/admin", "/play/../admin"]) assert.equal(safePlayerReturnPath(path), "/play");

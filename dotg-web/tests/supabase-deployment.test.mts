@@ -23,6 +23,8 @@ describe("Supabase deployment assets", () => {
       "20260823000100_add_download_storage.sql",
       "20261113090000_add_game_social.sql",
       "20261113100000_add_project_trailer.sql",
+      "20261113110000_add_game_room_directory.sql",
+      "20261113120000_add_eos_p2p_rooms.sql",
     ]);
 
     const sql = migrationNames
