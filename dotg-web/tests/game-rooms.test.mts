@@ -9,7 +9,7 @@ import { validateRoomRequest, type ListedRoom } from "../src/features/game-socia
 type SessionBundle = { address: string; transport: string; mode: string };
 type RoomResponses = {
   link_begin: { token: string; code: string };
-  link_status: { connected: boolean; display_name: string | null };
+  link_status: { connected: boolean; display_name: string | null; handle: string | null; avatar: string | null; avatar_path: string | null; real_name?: never };
   link_approve: { ok: boolean };
   list: { rooms: (ListedRoom & Record<string, unknown>)[] };
   create: { code: string; session: SessionBundle & { host_key: string } };
@@ -33,8 +33,12 @@ test("live directory pairs devices, binds host ownership, signs joins and expire
   try {
     await db.exec(`create schema extensions; create schema auth; create role anon; create role authenticated; create role service_role;
       create table auth.users(id uuid primary key,raw_user_meta_data jsonb default '{}');
-      create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;`);
-    for(const name of ["20260723073310_create_initial_content_schema.sql","20260723073320_add_initial_rls_policies.sql","20261113090000_add_game_social.sql","20261113110000_add_game_room_directory.sql","20261113120000_add_eos_p2p_rooms.sql"]){
+      create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
+      create schema storage;
+      create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);
+      create table storage.objects(id uuid primary key default gen_random_uuid(),bucket_id text,name text,owner_id text,metadata jsonb,unique(bucket_id,name));
+      alter table storage.objects enable row level security;`);
+    for(const name of ["20260723073310_create_initial_content_schema.sql","20260723073320_add_initial_rls_policies.sql","20261113090000_add_game_social.sql","20261113110000_add_game_room_directory.sql","20261113120000_add_eos_p2p_rooms.sql","20261114090000_add_player_account_settings.sql","20261115090000_add_native_player_profile.sql"]){
       await db.exec(readFileSync(`supabase/migrations/${name}`,"utf8"));
     }
     await db.query("insert into auth.users(id) values($1),($2)",[alice,bob]);
@@ -58,6 +62,23 @@ test("live directory pairs devices, binds host ownership, signs joins and expire
       await assert.rejects(call("link_status",{token:"a".repeat(64)}));
       await db.exec("begin; set local role anon");
       await assert.rejects(db.exec("select * from game_private.game_devices"));await db.exec("rollback");
+    });
+    await t.test("linked devices receive their current public card and avatar changes without private account fields",async()=>{
+      const photo = `${alice}/20000000-0000-4000-8000-000000000001.webp`;
+      const pending = await call("link_begin");
+      const waiting = await call("link_status",{token:pending.token});
+      assert.equal(waiting.connected,false); assert.equal(waiting.avatar_path,null);
+      assert.equal(waiting.display_name,null); assert.equal(waiting.handle,null);
+      await db.query("update public.game_profiles set avatar_path=$1,avatar='mint',real_name='비공개 이름',display_name='새 닉네임' where id=$2",[photo,alice]);
+      // Even an unrelated browser identity cannot override the device's owner.
+      const profile = await call("link_status",{token:host.token},bob);
+      assert.deepEqual(profile,{connected:true,display_name:"새 닉네임",handle:"alice",avatar:"mint",avatar_path:photo});
+      assert.equal((await call("link_status",{token:guest.token})).avatar_path,null);
+      await db.query("update public.game_profiles set avatar_path=null,display_name='방장' where id=$1",[alice]);
+      assert.equal((await call("link_status",{token:host.token})).avatar_path,null);
+      await assert.rejects(call("link_status",{},alice));
+      await db.query("update game_private.game_devices set expires_at=now()-interval '1 second' where code=$1",[pending.code]);
+      await assert.rejects(call("link_status",{token:pending.token}));
     });
     const created=await call("create",{token:host.token,title:"함께 플레이",endpoint:"127.0.0.1:28080",map_id:"elf-city"});
     await t.test("listing exposes only room metadata; joining uses signed credentials",async()=>{

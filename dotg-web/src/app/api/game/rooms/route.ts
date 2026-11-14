@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { validateRoomRequest } from "@/features/game-social/rooms";
+import { PLAYER_AVATAR_BUCKET } from "@/features/game-social/avatar";
 
 export const dynamic = "force-dynamic";
 const headers = { "Cache-Control": "private, no-store", "Vary": "Cookie", "X-Content-Type-Options": "nosniff" };
@@ -22,6 +23,12 @@ async function execute(action: string, payload: Record<string, string>, browser:
       if (error.code === "28000") return reply({ error: error.message }, 401);
       if (error.code === "P0001") return reply({ error: error.message }, 400);
       return reply({ error: "방 서비스를 불러오지 못했어요. 잠시 후 다시 시도해 주세요." }, 503);
+    }
+    if (action === "link_status" && data && typeof data === "object" && !Array.isArray(data)) {
+      const avatarUrl = data.connected === true && typeof data.avatar_path === "string"
+        ? db.storage.from(PLAYER_AVATAR_BUCKET).getPublicUrl(data.avatar_path).data.publicUrl
+        : null;
+      return reply({ ...data, avatar_url: avatarUrl });
     }
     return reply(data);
   } catch { return reply({ error: "방 서비스에 연결할 수 없습니다." }, 503); }
