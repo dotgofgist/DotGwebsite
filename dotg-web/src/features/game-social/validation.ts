@@ -50,5 +50,7 @@ export function validateSocialRequest(value: unknown): { action: string; payload
 }
 
 export function safePlayerReturnPath(value: string | null): string {
+  // Allow only the exact game callback shape, never arbitrary URLs or query keys.
+  if (value && /^\/play\?connect=[A-F0-9]{8}$/.test(value)) return value;
   return ["/play/password", "/account", "/friends"].includes(value ?? "") ? value! : "/play";
 }

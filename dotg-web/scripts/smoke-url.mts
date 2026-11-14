@@ -79,4 +79,23 @@ const rooms = await fetch(new URL("/api/game/rooms", url));
 if (!rooms.ok || !Array.isArray((await rooms.json()).rooms)) fail("/api/game/rooms did not return a public room list.");
 console.log("[DotG smoke] PASS /api/game/rooms (public room list)");
 
+// Native requests use the device credential, never a browser cookie fallback.
+for (const check of [
+  { name: "missing credential", payload: {}, extraHeaders: {}, expected: 400 },
+  { name: "browser origin rejected", payload: { token: "0".repeat(64) }, extraHeaders: { Origin: url.origin }, expected: 403 },
+  ...(mode === "production" ? [{ name: "expired/invalid credential", payload: { token: "0".repeat(64) }, extraHeaders: {}, expected: 401 }] : []),
+]) {
+  const response = await fetch(new URL("/api/game/account", url), {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...check.extraHeaders } as Record<string, string>,
+    body: JSON.stringify({ action: "dashboard", payload: check.payload }),
+    redirect: "manual",
+  });
+  await response.body?.cancel();
+  if (response.status !== check.expected || !response.headers.get("cache-control")?.includes("no-store")) {
+    fail(`/api/game/account ${check.name}: expected HTTP ${check.expected} with no-store, got ${response.status}.`);
+  }
+  console.log(`[DotG smoke] PASS /api/game/account (${check.name})`);
+}
+
 console.log(`[DotG smoke] ${mode} smoke passed for ${url.origin}.`);

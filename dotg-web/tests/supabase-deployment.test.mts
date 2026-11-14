@@ -27,6 +27,7 @@ describe("Supabase deployment assets", () => {
       "20261113120000_add_eos_p2p_rooms.sql",
       "20261114090000_add_player_account_settings.sql",
       "20261115090000_add_native_player_profile.sql",
+      "20261115100000_add_native_social.sql",
     ]);
 
     const sql = migrationNames

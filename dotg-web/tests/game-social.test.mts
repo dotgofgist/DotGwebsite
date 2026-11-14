@@ -28,6 +28,8 @@ test("email callbacks only return to player routes", () => {
   assert.equal(safePlayerReturnPath("/play/password"), "/play/password");
   assert.equal(safePlayerReturnPath("/account"), "/account");
   assert.equal(safePlayerReturnPath("/friends"), "/friends");
+  assert.equal(safePlayerReturnPath("/play?connect=AB1234CD"), "/play?connect=AB1234CD");
+  for (const path of ["/play?connect=AB1234CD&next=https://evil.test", "/play?connect=INVALID!", "/play?connect=AB1234CD#evil", "//evil.test/play?connect=AB1234CD", "/play?connect=AB1234CD\n", "/play?connect=ab1234cd"]) assert.equal(safePlayerReturnPath(path), "/play");
   for (const path of [null, "//evil.test", "https://evil.test", "/admin", "/play/../admin"]) assert.equal(safePlayerReturnPath(path), "/play");
 });
 

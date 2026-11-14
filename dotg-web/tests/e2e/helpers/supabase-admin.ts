@@ -13,8 +13,8 @@ function readLocalStatus(): SupabaseStatus {
   const command = process.platform === "win32" ? (process.env.ComSpec ?? "cmd.exe") : "pnpm";
   const commandArgs =
     process.platform === "win32"
-      ? ["/d", "/c", "pnpm.cmd supabase status"]
-      : ["supabase", "status"];
+      ? ["/d", "/c", "pnpm.cmd exec supabase status --output json"]
+      : ["exec", "supabase", "status", "--output", "json"];
   const result = spawnSync(command, commandArgs, {
     cwd: process.cwd(),
     encoding: "utf8",
