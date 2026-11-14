@@ -5,6 +5,8 @@ import { createHmac } from "node:crypto";
 import { PGlite } from "@electric-sql/pglite";
 import { pgcrypto } from "@electric-sql/pglite/contrib/pgcrypto";
 import { validateNativeRequest } from "../src/features/game-social/native.ts";
+import { validateNativeAuth } from "../src/features/game-social/native-auth.ts";
+import { readNativeBody } from "../src/features/game-social/native-http.ts";
 import type { SocialDashboard } from "../src/features/game-social/types.ts";
 import { validateRoomRequest, type ListedRoom } from "../src/features/game-social/rooms.ts";
 
@@ -40,7 +42,7 @@ test("live directory pairs devices, binds host ownership, signs joins and expire
       create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);
       create table storage.objects(id uuid primary key default gen_random_uuid(),bucket_id text,name text,owner_id text,metadata jsonb,unique(bucket_id,name));
       alter table storage.objects enable row level security;`);
-    for(const name of ["20260723073310_create_initial_content_schema.sql","20260723073320_add_initial_rls_policies.sql","20261113090000_add_game_social.sql","20261113110000_add_game_room_directory.sql","20261113120000_add_eos_p2p_rooms.sql","20261114090000_add_player_account_settings.sql","20261115090000_add_native_player_profile.sql","20261115100000_add_native_social.sql"]){
+    for(const name of ["20260723073310_create_initial_content_schema.sql","20260723073320_add_initial_rls_policies.sql","20261113090000_add_game_social.sql","20261113110000_add_game_room_directory.sql","20261113120000_add_eos_p2p_rooms.sql","20261114090000_add_player_account_settings.sql","20261115090000_add_native_player_profile.sql","20261115100000_add_native_social.sql","20261115110000_add_native_login.sql"]){
       await db.exec(readFileSync(`supabase/migrations/${name}`,"utf8"));
     }
     await db.query("insert into auth.users(id) values($1),($2)",[alice,bob]);
@@ -54,6 +56,33 @@ test("live directory pairs devices, binds host ownership, signs joins and expire
       }catch(e){await db.exec("rollback");throw e;}
     }
     const host=await call("link_begin"), guest=await call("link_begin");
+    await t.test("native login requires Auth identity, onboards legacy players and revokes only its own device",async()=>{
+      await db.exec("begin; set local role anon");
+      await assert.rejects(db.exec("select public.game_native_login()"));await db.exec("rollback");
+      await db.exec("begin; set local role authenticated");
+      await db.query("select set_config('request.jwt.claim.sub','',true)");
+      await assert.rejects(db.exec("select public.game_native_login()"));await db.exec("rollback");
+      const legacy="10000000-0000-4000-8000-000000000003";
+      await db.query("insert into auth.users(id) values($1)",[legacy]);
+      await db.exec("begin; set local role authenticated");
+      await db.query("select set_config('request.jwt.claim.sub',$1,true)",[legacy]);
+      const {rows}=await db.query<{value:{device_token:string,profile:{handle:string}}}>("select public.game_native_login() as value");
+      const first=rows[0].value;
+      assert.equal((await db.query<{ok:boolean}>("select public.game_native_device_matches($1) as ok",[first.device_token])).rows[0].ok,true);
+      await db.query("select set_config('request.jwt.claim.sub',$1,true)",[bob]);
+      assert.equal((await db.query<{ok:boolean}>("select public.game_native_device_matches($1) as ok",[first.device_token])).rows[0].ok,false);
+      await db.query("select set_config('request.jwt.claim.sub',$1,true)",[legacy]);
+      const second=(await db.query<{value:{device_token:string}}>("select public.game_native_login() as value")).rows[0].value;
+      await db.exec("commit");
+      assert.match(first.device_token,/^[a-f0-9]{64}$/);
+      assert.match(first.profile.handle,/^p_[a-f0-9]{22}$/);
+      assert.equal((await call("link_status",{token:first.device_token})).connected,true);
+      await db.exec("begin; set local role anon");
+      await db.query("select public.game_native_logout($1)",[first.device_token]);await db.exec("commit");
+      await assert.rejects(call("link_status",{token:first.device_token}));
+      assert.equal((await call("link_status",{token:second.device_token})).connected,true);
+      await db.query("delete from auth.users where id=$1",[legacy]);
+    });
     await t.test("approval requires a profile, cannot be stolen or repeated, and tokens stay private",async()=>{
       assert.equal((await call("link_status",{token:host.token})).connected,false);
       await assert.rejects(call("link_approve",{code:host.code}));
@@ -204,4 +233,12 @@ test("native HTTP payload validation requires a token and limits available actio
   for(const action of ["set_avatar","host_bundle","join_bundle","create_room","constructor"]) assert.throws(()=>validateNativeRequest({action,payload:{token}}));
   assert.throws(()=>validateNativeRequest({action:"search_players",payload:{token,query:"a"}}));
   assert.throws(()=>validateNativeRequest({action:"join_invite",payload:{token,id:"bad"}}));
+});
+
+test("native password inputs preserve secrets verbatim and reject malformed sessions",async()=>{
+  assert.deepEqual(validateNativeAuth({action:"login",email:" player@example.test ",password:" pass with spaces "}),{action:"login",email:"player@example.test",password:" pass with spaces "});
+  for(const input of [null,[],{action:"login",email:"bad",password:"x"},{action:"login",email:"a@b.test",password:""},{action:"login",email:"a@b.test",password:"x".repeat(129)},{action:"refresh",refresh_token:"\nsecret"},{action:"logout",device_token:"bad"}]) assert.throws(()=>validateNativeAuth(input));
+  // No Content-Length is required for the actual-stream cap to work.
+  await assert.rejects(readNativeBody(new Request("https://game.test",{method:"POST",body:new Uint8Array(129)}),128));
+  assert.equal((await readNativeBody(new Request("https://game.test",{method:"POST",body:"hello"}),128)).length,5);
 });

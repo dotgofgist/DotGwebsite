@@ -18,6 +18,7 @@ const requiredMigrations = [
   "20261114090000_add_player_account_settings.sql",
   "20261115090000_add_native_player_profile.sql",
   "20261115100000_add_native_social.sql",
+  "20261115110000_add_native_login.sql",
 ];
 const requiredTables = [
   "profiles",
