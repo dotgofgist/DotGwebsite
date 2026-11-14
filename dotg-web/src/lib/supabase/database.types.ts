@@ -710,7 +710,10 @@ export type Database = {
         }
         Returns: string
       }
-      game_native_social: { Args: { action: string; payload?: Json }; Returns: Json }
+      game_native_social: {
+        Args: { action: string; payload?: Json }
+        Returns: Json
+      }
       game_rooms: { Args: { action: string; payload?: Json }; Returns: Json }
       game_social: { Args: { action: string; payload?: Json }; Returns: Json }
       is_admin: { Args: never; Returns: boolean }
