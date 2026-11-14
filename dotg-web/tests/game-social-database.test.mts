@@ -26,7 +26,7 @@ test("Postgres enforces player identity, friendship consent, blocking and signed
       grant usage on schema storage to authenticated;
       grant select,insert,update,delete on storage.objects to authenticated;
     `);
-    for (const name of ["20260723073310_create_initial_content_schema.sql", "20260723073320_add_initial_rls_policies.sql", "20261113090000_add_game_social.sql", "20261113110000_add_game_room_directory.sql", "20261113120000_add_eos_p2p_rooms.sql", "20261114090000_add_player_account_settings.sql"]) {
+    for (const name of ["20260723073310_create_initial_content_schema.sql", "20260723073320_add_initial_rls_policies.sql", "20261113090000_add_game_social.sql", "20261113110000_add_game_room_directory.sql", "20261113120000_add_eos_p2p_rooms.sql", "20261114090000_add_player_account_settings.sql", "20261115090000_add_native_player_profile.sql", "20261115100000_add_native_social.sql"]) {
       await db.exec(readFileSync(`supabase/migrations/${name}`, "utf8"));
     }
     await db.query("insert into auth.users(id) values($1),($2),($3)", [a,b,c]);
