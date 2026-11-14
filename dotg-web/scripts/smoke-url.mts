@@ -98,4 +98,14 @@ for (const check of [
   console.log(`[DotG smoke] PASS /api/game/account (${check.name})`);
 }
 
+for (const [path, options, expected] of [
+  ["/api/game/auth", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "login" }) }, 400],
+  ["/api/game/auth", { method: "POST", headers: { Origin: url.origin, "Content-Type": "application/json" }, body: "{}" }, 403],
+  ["/api/game/account/avatar", { method: "POST", headers: { "Content-Type": "image/png" }, body: "invalid" }, 401],
+] as const) {
+  const response = await fetch(new URL(path, url), { ...options, redirect: "manual" });
+  await response.body?.cancel();
+  if (response.status !== expected || !response.headers.get("cache-control")?.includes("no-store")) fail(`${path} expected ${expected} with no-store, got ${response.status}.`);
+  console.log(`[DotG smoke] PASS ${path} (${expected})`);
+}
 console.log(`[DotG smoke] ${mode} smoke passed for ${url.origin}.`);

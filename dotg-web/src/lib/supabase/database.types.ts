@@ -710,6 +710,9 @@ export type Database = {
         }
         Returns: string
       }
+      game_native_device_matches: { Args: { token: string }; Returns: boolean }
+      game_native_login: { Args: never; Returns: Json }
+      game_native_logout: { Args: { token: string }; Returns: Json }
       game_native_social: {
         Args: { action: string; payload?: Json }
         Returns: Json
