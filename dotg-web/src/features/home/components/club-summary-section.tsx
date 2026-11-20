@@ -28,7 +28,7 @@ export async function ClubSummarySection() {
         <div className="space-y-4">
           <p className="text-sm font-semibold text-primary">동아리 소개</p>
           <h2 className="text-2xl font-semibold tracking-normal sm:text-3xl">
-            상상해오던 너의 게임을 나와 함께 만들어보지 않겠는가
+            상상해오던 너의 게임을 우리와 함께
           </h2>
           <p className="text-sm leading-7 text-neutral-600 dark:text-neutral-300">
             {siteSettings.shortDescription}
