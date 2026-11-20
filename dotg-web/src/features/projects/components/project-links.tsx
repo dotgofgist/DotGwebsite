@@ -19,7 +19,9 @@ function isConfiguredLink(link: ProjectLink): boolean {
 }
 
 export function ProjectLinks({ links }: ProjectLinksProps) {
-  const configuredLinks = links.filter(isConfiguredLink);
+  const configuredLinks = links.filter(
+    (link) => link.type !== "download" && isConfiguredLink(link),
+  );
 
   if (configuredLinks.length === 0) {
     return (

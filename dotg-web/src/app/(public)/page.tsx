@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { siteConfig } from "@/config/site";
 import { getCanonicalUrl } from "@/config/site-url";
 import { SocialBanner } from "@/components/shared/social-banner";
 import { ActivitySection } from "@/features/home/components/activity-section";
@@ -12,8 +13,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: getCanonicalUrl("/"),
   },
-  title: "DotG",
-  description: "함께 배우고 게임을 만드는 동아리 DotG의 활동과 프로젝트를 소개합니다.",
+  title: { absolute: siteConfig.title },
+  description: "Gist의 게임창작부 DotG의 활동과 프로젝트를 소개합니다.",
 };
 
 export default function HomePage() {

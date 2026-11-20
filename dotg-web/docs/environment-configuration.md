@@ -54,6 +54,34 @@ pnpm build
 
 For Vercel, set both variables in Project Settings -> Environment Variables for Preview and Production. Vercel provides `VERCEL_ENV` automatically.
 
+## Google Search Console and the public domain
+
+The public site redirects to `https://www.dotgsince2023.co.kr`. Set
+`NEXT_PUBLIC_SITE_URL=https://www.dotgsince2023.co.kr` in Vercel Production,
+including the environment used for production builds. Deploy changes before
+checking the public metadata. The canonical URL, `/robots.txt` sitemap directive,
+and URLs in `/sitemap.xml` must all use this public origin, never `localhost`.
+The robots route resolves its settings at request time to avoid retaining a
+build-time fallback URL. Preview deployments remain blocked from crawling.
+
+To verify the whole domain in Google Search Console:
+
+1. Add a **Domain** property for `dotgsince2023.co.kr` (without a scheme or `www`).
+2. Copy the exact `google-site-verification=...` TXT value issued by Google.
+3. The domain uses `ns1.vercel-dns.com` and `ns2.vercel-dns.com`. In Vercel's DNS
+   settings for this domain, add a TXT record at the domain root with that value.
+   Keep existing records and retain the verification record after verification.
+4. Once the TXT record is publicly visible, click **Verify** in Search Console.
+5. Submit `https://www.dotgsince2023.co.kr/sitemap.xml` under **Sitemaps**, then
+   inspect `https://www.dotgsince2023.co.kr/` and request indexing.
+
+Domain-property verification uses DNS; an HTML meta tag only verifies a URL-prefix
+property. Verification and sitemap submission do not guarantee search inclusion.
+Google may take days to weeks to crawl the site.
+
+References: [Google ownership verification](https://support.google.com/webmasters/answer/9008080),
+[Google indexing requests](https://developers.google.com/search/docs/crawling-indexing/ask-google-to-recrawl).
+
 ## Supabase Auth URL Settings
 
 Configure these in Supabase Dashboard -> Authentication -> URL Configuration.

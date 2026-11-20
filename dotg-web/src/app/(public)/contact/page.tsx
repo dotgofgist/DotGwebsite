@@ -35,11 +35,10 @@ export default function ContactPage() {
           <div className="max-w-2xl space-y-3">
             <p className="text-sm font-semibold text-primary">문의 안내</p>
             <h2 className="text-2xl font-semibold tracking-normal">
-              확인된 연락 수단만 안내합니다
+              공식 연락 채널은 아직 정리 중입니다
             </h2>
             <p className="text-sm leading-7 text-neutral-600 dark:text-neutral-300">
-              실제 이메일, 전화번호, 외부 커뮤니티 링크가 확정되기 전까지는
-              작동하는 연락 링크로 표시하지 않습니다.
+              현재 공식 연락 채널을 정리 중입니다. 지원 관련 안내는 모집 페이지에서 확인해 주세요.
             </p>
           </div>
           <ContactCard />

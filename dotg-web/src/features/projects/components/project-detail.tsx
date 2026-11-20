@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
 import type { Project } from "../types";
 import { parseProjectTrailerUrl } from "../trailer";
+import { ProjectDownload } from "./project-download";
 import { ProjectLinks } from "./project-links";
 import { ProjectStatusBadge } from "./project-status-badge";
 import { ProjectTrailer } from "./project-trailer";
@@ -85,12 +86,15 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
                 ))}
               </ul>
             ) : null}
-            <Link
-              className={buttonClasses({ variant: "secondary" })}
-              href="/projects"
-            >
-              프로젝트 목록으로 돌아가기
-            </Link>
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <ProjectDownload links={project.links} />
+              <Link
+                className={buttonClasses({ variant: "secondary", size: "lg" })}
+                href="/projects"
+              >
+                프로젝트 목록으로 돌아가기
+              </Link>
+            </div>
           </div>
           <div className="aspect-video overflow-hidden rounded-lg">
             <ProjectHeroImage project={project} />

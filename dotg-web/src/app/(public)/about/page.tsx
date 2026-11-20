@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     canonical: getCanonicalUrl("/about"),
   },
   title: "동아리 소개",
-  description: "게임창작부 DotG의 활동 목표와 제작 흐름을 소개합니다.",
+  description: "Gist 게임창작부 DotG의 활동 목표와 제작 흐름을 소개합니다.",
 };
 
 export default function AboutPage() {
@@ -25,8 +25,7 @@ export default function AboutPage() {
             동아리 소개
           </h1>
           <p className="max-w-2xl text-base leading-8 text-neutral-600 dark:text-neutral-300">
-            DotG는 기획, 프로그래밍, 디자인 등 다양한 분야의 구성원이
-            자유롭게 팀을 이루어 함께 배우고 게임을 만드는 동아리입니다.
+            DotG는 Gist의 게임창작부입니다.
           </p>
         </Container>
       </section>

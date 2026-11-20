@@ -31,6 +31,7 @@ if (!baseURL) {
 
 const normalizedBaseURL = baseURL.startsWith("http") ? baseURL : `https://${baseURL}`;
 const url = new URL(normalizedBaseURL);
+let canonicalOrigin = url.origin;
 
 if (mode === "preview" && process.env.SMOKE_ALLOW_PRODUCTION !== "true") {
   const host = url.hostname.toLowerCase();
@@ -51,6 +52,29 @@ for (const route of publicRoutes) {
   }
 
   const body = await response.text();
+  if (mode === "production" && route === "/") {
+    const canonical = body.match(/<link\b(?=[^>]*\brel=["']canonical["'])(?=[^>]*\bhref=["']([^"']+)["'])[^>]*>/i);
+    if (!canonical) fail("The production homepage must declare a canonical URL.");
+    canonicalOrigin = new URL(canonical[1], response.url).origin;
+  }
+  if (mode === "production" && route === "/robots.txt") {
+    const expectedSitemap = new URL("/sitemap.xml", canonicalOrigin).href;
+    const declaredSitemaps = [...body.matchAll(/^Sitemap:\s*(\S+)\s*$/gim)]
+      .map((match) => match[1]);
+    if (!declaredSitemaps.includes(expectedSitemap)) {
+      fail(`robots.txt must advertise the public sitemap: ${expectedSitemap}.`);
+    }
+    if (/^Disallow:\s*\/\s*$/im.test(body)) {
+      fail("Production robots.txt blocks the entire site.");
+    }
+  }
+  if (mode === "production" && route === "/sitemap.xml") {
+    const locations = [...body.matchAll(/<loc>([^<]+)<\/loc>/g)]
+      .map((match) => match[1]);
+    if (locations.length === 0 || locations.some((location) => new URL(location).origin !== canonicalOrigin)) {
+      fail(`sitemap.xml must contain public URLs on ${canonicalOrigin}.`);
+    }
+  }
   const expectsHtmlMain = !route.endsWith(".txt") && !route.endsWith(".xml");
   if (expectsHtmlMain && !body.includes("<main") && !body.includes("</main>")) {
     fail(`${target.toString()} did not include a main landmark.`);

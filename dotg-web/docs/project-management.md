@@ -36,6 +36,12 @@ New projects default to `planning` and `draft`.
 
 Allowed link types are `github`, `website`, `download`, `youtube`, `steam`, and `itchio`.
 
+## Project Downloads
+
+Every public project detail page shows a download action beside the link back to the project list. Existing `download` links become primary buttons here and are omitted from the related links section. Multiple download links can have platform-specific labels.
+
+When no download URL is configured (including blank or `#` placeholders), the page shows a gray, inactive **다운로드** button. Hovering or focusing it displays **출시되지 않은 게임입니다**; Escape dismisses the tooltip. Availability follows the configured download links, independently of the project's development status. This is a frontend change only and does not upload or host game files.
+
 ## Project Trailers
 
 The optional **트레일러 영상 URL** field on the create/edit form accepts HTTPS YouTube video links (`watch`, `youtu.be`, `shorts`, `live`, or `embed`) and direct `.mp4`/`.webm` URLs, including query strings. The form previews supported URLs before saving. YouTube links are normalized to a watch URL and rendered using the privacy-enhanced embed host. Other external links remain separate.
