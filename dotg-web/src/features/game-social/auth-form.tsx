@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
-import { safePlayerReturnPath, validateSocialRequest } from "./validation";
+import { safePlayerReturnPath, validateOrganizationName, validateSocialRequest } from "./validation";
 import styles from "./portal.module.css";
 
 export function PlayerAuthForm({ passwordOnly = false, initialMode = "login", returnTo = "/play", standalone = false }: { passwordOnly?: boolean; initialMode?: "login" | "signup"; returnTo?: string; standalone?: boolean }) {
@@ -36,7 +36,8 @@ export function PlayerAuthForm({ passwordOnly = false, initialMode = "login", re
         setMessage("가입된 이메일이면 비밀번호 재설정 안내를 보냈습니다.");
       } else if (mode === "signup") {
         const { payload } = validateSocialRequest({ action: "save_profile", payload: { handle: form.get("handle"), real_name: form.get("real_name"), display_name: form.get("display_name"), bio: "", avatar: "coral" } });
-        const { data, error } = await db.auth.signUp({ email, password, options: { data: { handle: payload.handle, real_name: payload.real_name, display_name: payload.display_name }, emailRedirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(destination)}` } });
+        const organizationName = validateOrganizationName(form.get("organization_name"));
+        const { data, error } = await db.auth.signUp({ email, password, options: { data: { handle: payload.handle, real_name: payload.real_name, display_name: payload.display_name, organization_name: organizationName }, emailRedirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(destination)}` } });
         if (error) throw new Error(error.code === "unexpected_failure" ? "이미 사용 중인 사용자 ID일 수 있습니다. 다른 ID로 다시 시도해 주세요." : "가입하지 못했습니다. 사용자 ID·이메일·비밀번호를 확인하거나 잠시 후 다시 시도해 주세요.");
         if (data.session) complete();
         else setMessage("이메일로 도착한 확인 링크를 열어 가입을 완료해 주세요. 이미 가입했다면 로그인해 주세요.");
@@ -55,6 +56,7 @@ export function PlayerAuthForm({ passwordOnly = false, initialMode = "login", re
       {!passwordOnly && mode === "signup" && <>
         <label>이름<input name="real_name" autoComplete="name" required maxLength={50} placeholder="이름" /><small className={styles.muted}>본인 설정에만 표시하며 친구에게 공개하지 않습니다.</small></label>
         <label>닉네임<input name="display_name" autoComplete="nickname" required maxLength={32} placeholder="친구와 게임에 표시할 닉네임" /></label>
+        <label>소속 기관명 (선택)<input name="organization_name" autoComplete="organization" maxLength={100} placeholder="한국대학교 / 게임창작부" className={styles.organizationInput} aria-describedby="organization-hint" /><small id="organization-hint" className={styles.muted}>학교, 회사, 동아리 등 소속을 자유롭게 입력해 주세요.</small></label>
         <label>사용자 ID<input name="handle" autoComplete="username" autoCapitalize="none" spellCheck={false} required pattern="[A-Za-z0-9_]{3,24}" minLength={3} maxLength={24} placeholder="dotg_player" /><small className={styles.muted}>친구가 찾을 수 있는 고유 ID · 영문·숫자·밑줄 3~24자</small></label>
       </>}
       {!passwordOnly && <label>이메일<input name="email" type="email" autoComplete="email" required maxLength={254} /></label>}

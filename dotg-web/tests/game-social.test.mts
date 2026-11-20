@@ -1,10 +1,19 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { safePlayerReturnPath, validateSocialRequest } from "../src/features/game-social/validation.ts";
+import { safePlayerReturnPath, validateOrganizationName, validateSocialRequest } from "../src/features/game-social/validation.ts";
 test("player cannot inject roles or identities through profile payloads", () => {
   const result = validateSocialRequest({ action: "save_profile", payload: { handle: "Friend_1", real_name: " 김이름 ", display_name: "친구", bio: "안녕", avatar: "mint", role: "admin", id: "attacker", avatar_path: "foreign/photo.webp" } });
   assert.deepEqual(result.payload, { handle: "friend_1", real_name: "김이름", display_name: "친구", bio: "안녕", avatar: "mint" });
 });
+test("signup organization is optional and accepts a trimmed school and club name", () => {
+  for (const value of [undefined, null, "", "   "]) assert.equal(validateOrganizationName(value), "");
+  assert.equal(validateOrganizationName("  한국대학교 / 게임창작부  "), "한국대학교 / 게임창작부");
+  assert.equal(validateOrganizationName("가".repeat(100)), "가".repeat(100));
+  for (const value of ["가".repeat(101), "학교\n동아리", "학교\u0000동아리", 123, {}]) {
+    assert.throws(() => validateOrganizationName(value));
+  }
+});
+
 test("mutations reject invalid targets, endpoints and inherited action names", () => {
   for (const input of [
     { action: "accept_friend", payload: { id: "fake" } },

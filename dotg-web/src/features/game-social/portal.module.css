@@ -11,6 +11,7 @@
 .form { display: grid; gap: 14px; margin: 16px 0; }
 .portal label { display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
 .portal input, .portal textarea, .portal select { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; background: var(--background); font-weight: 400; }
+.organizationInput::placeholder { color: #737373; opacity: 1; }
 .portal textarea { min-height: 82px; resize: vertical; }
 .portal button { background: var(--action-background); color: var(--action-foreground); border: 1px solid transparent; border-radius: 8px; padding: 9px 14px; font-size: 14px; font-weight: 650; }
 .portal button:disabled { opacity: .5; }
@@ -55,4 +56,4 @@
 .roomTable code { font-size: 13px; letter-spacing: .05em; }
 .row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 8px; align-items: end; margin: 12px 0; }
 @media(max-width:760px) { .grid { grid-template-columns: 1fr; } .portal { padding: 28px 16px 56px; } .card { padding: 20px; } }
-@media(prefers-color-scheme:dark) { .portal { --action-background: #ff947a; --action-foreground: #171717; --accent-text: #ff947a; } }
+@media(prefers-color-scheme:dark) { .portal { --action-background: #ff947a; --action-foreground: #171717; --accent-text: #ff947a; } .organizationInput::placeholder { color: #a3a3a3; } }

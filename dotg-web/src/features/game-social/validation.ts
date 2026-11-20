@@ -49,6 +49,14 @@ export function validateSocialRequest(value: unknown): { action: string; payload
   return { action, payload: result };
 }
 
+export function validateOrganizationName(value: unknown): string {
+  if (value == null) return "";
+  if (typeof value !== "string") throw new Error("소속 기관명을 확인해 주세요.");
+  const name = value.trim();
+  if ([...name].length > 100 || /[\p{Cc}]/u.test(name)) throw new Error("소속 기관명은 제어문자 없이 100자 이내로 입력해 주세요.");
+  return name;
+}
+
 export function safePlayerReturnPath(value: string | null): string {
   // Allow only the exact game callback shape, never arbitrary URLs or query keys.
   if (value && /^\/play\?connect=[A-F0-9]{8}$/.test(value)) return value;

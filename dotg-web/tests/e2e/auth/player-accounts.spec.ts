@@ -8,6 +8,10 @@ test("signup separates name and nickname and retains values after password misma
   await page.goto("/signup");
   await page.locator('input[name="real_name"]').fill("테스트 이름");
   await page.locator('input[name="display_name"]').fill("테스트 닉네임");
+  const organization = page.getByRole("textbox", { name: /^소속 기관명 \(선택\)/ });
+  await expect(organization).toHaveAttribute("placeholder", "한국대학교 / 게임창작부");
+  await expect(organization).not.toHaveAttribute("required", "");
+  await organization.fill("한국대학교 / 게임창작부");
   await page.locator('input[name="handle"]').fill("e2e_signup");
   await page.getByLabel("이메일", { exact: true }).fill("signup@example.test");
   await page.getByLabel("비밀번호", { exact: true }).fill("mismatch-one-123");
@@ -16,6 +20,7 @@ test("signup separates name and nickname and retains values after password misma
   await expect(page.getByRole("main").getByRole("alert")).toHaveText("비밀번호가 서로 일치하지 않습니다.");
   await expect(page.locator('input[name="real_name"]')).toHaveValue("테스트 이름");
   await expect(page.locator('input[name="display_name"]')).toHaveValue("테스트 닉네임");
+  await expect(organization).toHaveValue("한국대학교 / 게임창작부");
 });
 
 test("signup creates a profile with a private name and a separate nickname", async ({ page }) => {
@@ -26,6 +31,7 @@ test("signup creates a profile with a private name and a separate nickname", asy
     await page.goto("/signup");
     await page.locator('input[name="real_name"]').fill("가입 테스트 이름");
     await page.locator('input[name="display_name"]').fill("가입 테스트 닉네임");
+    await page.getByRole("textbox", { name: /^소속 기관명 \(선택\)/ }).fill("  한국대학교 / 게임창작부  ");
     await page.locator('input[name="handle"]').fill(handle);
     await page.getByLabel("이메일", { exact: true }).fill(email);
     await page.getByLabel("비밀번호", { exact: true }).fill(e2ePassword);
@@ -35,6 +41,9 @@ test("signup creates a profile with a private name and a separate nickname", asy
     await expect(page.locator('input[name="real_name"]')).toHaveValue("가입 테스트 이름");
     await expect(page.locator('input[name="display_name"]')).toHaveValue("가입 테스트 닉네임");
     await expect(page.locator('input[name="handle"]')).toHaveValue(handle);
+    const { data: registered, error: lookupError } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+    if (lookupError) throw lookupError;
+    expect(registered.users.find(user => user.email === email)?.user_metadata.organization_name).toBe("한국대학교 / 게임창작부");
     await page.getByRole("navigation", { name: "계정 메뉴" }).getByRole("button", { name: "로그아웃", exact: true }).click();
     await page.goto("/login");
     await page.getByLabel("이메일", { exact: true }).fill(email);
