@@ -16,9 +16,9 @@ export async function HeroSection() {
               {siteSettings.title}
             </p>
             <h1 className="max-w-3xl text-4xl font-semibold tracking-normal sm:text-5xl lg:text-6xl">
-              함께 배우고,
+              Gist 게임창작부
               <br />
-              자유롭게 만듭니다.
+              DotG의 페이지에 오신 것을 환영합니다
             </h1>
             <p className="max-w-2xl text-base leading-8 text-neutral-600 dark:text-neutral-300">
               {siteSettings.description}

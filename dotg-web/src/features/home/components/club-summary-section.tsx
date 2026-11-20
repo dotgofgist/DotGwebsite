@@ -6,16 +6,16 @@ import { getPublicSiteSettings } from "@/features/settings/public-queries";
 
 const values = [
   {
-    title: "자유로운 팀 구성",
-    description: "관심사가 맞는 부원들과 팀을 이루어 원하는 게임을 개발합니다.",
+    title: "위대한 게임을",
+    description: "그리자! 학기 프로젝트로 초거대 공룡만한 합작을!",
   },
   {
-    title: "함께 배우는 성장",
-    description: "선배와 동료가 스터디와 제작 경험을 나누며 함께 발전합니다.",
+    title: "아름다운 게임을",
+    description: "탐험하자! 분기마다 파티를 모아 전국의 컨퍼런스를 찾아서!",
   },
   {
-    title: "도전과 공유",
-    description: "게임잼과 대회에 도전하고 완성한 작품으로 서로의 성장을 확인합니다.",
+    title: "자랑스런 게임을",
+    description: "도전해보자! 전국의 겜창부와 만나 BIC, PlayX4, UNICODE에 나가보자!",
   },
 ];
 
@@ -28,7 +28,7 @@ export async function ClubSummarySection() {
         <div className="space-y-4">
           <p className="text-sm font-semibold text-primary">동아리 소개</p>
           <h2 className="text-2xl font-semibold tracking-normal sm:text-3xl">
-            열정과 아이디어가 게임이 되는 곳
+            상상해오던 너의 게임을 나와 함께 만들어보지 않겠는가
           </h2>
           <p className="text-sm leading-7 text-neutral-600 dark:text-neutral-300">
             {siteSettings.shortDescription}

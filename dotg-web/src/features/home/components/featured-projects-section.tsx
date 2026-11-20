@@ -24,8 +24,7 @@ export async function FeaturedProjectsSection() {
               프로젝트 미리보기
             </h2>
             <p className="text-sm leading-7 text-neutral-600 dark:text-neutral-300">
-              실제 프로젝트 데이터가 준비되면 대표작과 제작 기록을 이 영역에
-              표시합니다.
+              개발중인 프로젝트를 살펴보고 다운로드할 수 있습니다.
             </p>
           </div>
           <Link
