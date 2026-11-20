@@ -26,25 +26,44 @@ async function expectNoSeriousA11yViolations(page: import("@playwright/test").Pa
     blockingViolations.map((violation) => ({
       id: violation.id,
       impact: violation.impact,
-      nodes: violation.nodes.map((node) => node.target),
+      nodes: violation.nodes.map((node) => ({
+        target: node.target,
+        summary: node.failureSummary,
+      })),
     })),
   ).toEqual([]);
 }
 
-test.describe("accessibility smoke", () => {
-  for (const route of publicA11yRoutes) {
-    test(`has no serious or critical violations on ${route}`, async ({ page }) => {
-      await page.goto(route);
+for (const colorScheme of ["light", "dark"] as const) {
+  test.describe(`accessibility smoke (${colorScheme})`, () => {
+    test.use({ colorScheme });
+
+    for (const route of publicA11yRoutes) {
+      test(`has no serious or critical violations on ${route}`, async ({ page }) => {
+        await page.goto(route);
+        await expectNoSeriousA11yViolations(page);
+      });
+    }
+
+    test("keeps the primary link readable on hover and focus", async ({ page }) => {
+      await page.goto("/");
+      const primaryLink = page.getByRole("link", { name: "프로젝트 보기", exact: true });
+      await primaryLink.hover();
+      await expectNoSeriousA11yViolations(page);
+      await page.mouse.move(0, 0);
+      await primaryLink.focus();
       await expectNoSeriousA11yViolations(page);
     });
-  }
 
-  test.describe("editor admin form", () => {
-    test.use({ storageState: e2eAccounts.editor.storageState });
+    test.describe("editor admin form", () => {
+      test.use({ storageState: e2eAccounts.editor.storageState });
 
-    test("has no serious or critical violations on project creation", async ({ page }) => {
-      await page.goto("/admin/projects/new");
-      await expectNoSeriousA11yViolations(page);
+      test("has no serious or critical violations on project creation", async ({ page }) => {
+        await page.goto("/admin/projects/new");
+        await expectNoSeriousA11yViolations(page);
+        await page.getByRole("button", { name: "프로젝트 생성", exact: true }).hover();
+        await expectNoSeriousA11yViolations(page);
+      });
     });
   });
-});
+}
