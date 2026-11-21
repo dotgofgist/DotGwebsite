@@ -1,6 +1,8 @@
 import type { Project } from "./types";
+import { legacyGames } from "./legacy-games";
 
 export const projects: Project[] = [
+  ...legacyGames,
   {
     id: "project-aurora",
     slug: "project-aurora",

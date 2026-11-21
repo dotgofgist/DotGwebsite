@@ -9,6 +9,8 @@
     "pnpm": ">=10 <11"
   },
   "scripts": {
+    "games:prepare": "python scripts/prepare-legacy-games.py",
+    "games:import": "node --experimental-strip-types scripts/import-legacy-games.mts",
     "dev": "next dev",
     "prebuild": "node --experimental-strip-types scripts/check-env.mts",
     "build": "next build",

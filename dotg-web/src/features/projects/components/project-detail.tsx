@@ -87,7 +87,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
               </ul>
             ) : null}
             <div className="flex flex-wrap items-center gap-3 pt-2">
-              <ProjectDownload links={project.links} />
+              <ProjectDownload links={project.links} status={project.status} />
               <Link
                 className={buttonClasses({ variant: "secondary", size: "lg" })}
                 href="/projects"

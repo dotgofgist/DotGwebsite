@@ -94,6 +94,7 @@ The database stores object paths. Public URLs are created when data is queried. 
 
 ## Documentation
 
+- `docs/legacy-games.md` — MinePG / StarFlight 등록 자료와 배포 패키지 생성
 - `docs/environment-configuration.md`
 - `docs/supabase-remote-deployment.md`
 - `docs/authorization-model.md`

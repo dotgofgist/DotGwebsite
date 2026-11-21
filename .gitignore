@@ -1,3 +1,7 @@
 .pnpm-store/
 .vercel
 .env*
+
+# Original game builds and generated release packages are distributed separately.
+/temp/
+/dotg-web/artifacts/

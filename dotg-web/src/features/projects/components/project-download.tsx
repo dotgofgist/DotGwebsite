@@ -2,10 +2,11 @@
 
 import { useId, useState } from "react";
 import { buttonClasses } from "@/components/ui/button";
-import type { ProjectLink } from "../types";
+import type { ProjectLink, ProjectStatus } from "../types";
 
 type ProjectDownloadProps = {
   links: ProjectLink[];
+  status: ProjectStatus;
 };
 
 function DownloadIcon() {
@@ -25,7 +26,7 @@ function DownloadIcon() {
   );
 }
 
-export function ProjectDownload({ links }: ProjectDownloadProps) {
+export function ProjectDownload({ links, status }: ProjectDownloadProps) {
   const tooltipId = useId();
   const [tooltipDismissed, setTooltipDismissed] = useState(false);
   const downloadLinks = links.filter(
@@ -81,7 +82,9 @@ export function ProjectDownload({ links }: ProjectDownloadProps) {
         role="tooltip"
       >
         <span className="block rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white shadow-lg dark:bg-neutral-100 dark:text-neutral-900">
-          출시되지 않은 게임입니다
+          {status === "released" || status === "archived"
+            ? "다운로드 파일을 준비 중입니다"
+            : "출시되지 않은 게임입니다"}
         </span>
       </span>
     </div>

@@ -2,10 +2,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Container } from "@/components/ui/container";
 
 const goals = [
-  "분야와 경험에 관계없이 게임 개발에 도전하기",
-  "선배와 동료에게 배우며 개발 지식 쌓기",
-  "팀과 함께 원하는 게임을 꾸준히 완성하기",
-  "완성한 작품을 공유하며 서로의 성장 확인하기",
+  "어떤 기술도 구현할 수 있는 사고의 가호를",
+  "어떤 표상도 재현할 수 있는 붓질의 가호를",
+  "어떤 논리도 발현할 수 있는 창의의 가호를",
+  "어떤 상상도 실현할 수 있는 의지의 가호를",
 ];
 
 export function ClubGoals() {
@@ -15,7 +15,7 @@ export function ClubGoals() {
         <div className="max-w-2xl space-y-3">
           <p className="text-sm font-semibold text-primary">활동 목표</p>
           <h2 className="text-2xl font-semibold tracking-normal">
-            제작 경험을 쌓기 위한 목표
+            졸업의 우리는 어썸하고 유니크한 크리에이터가 될 것입니다
           </h2>
         </div>
         <div className="grid gap-4 md:grid-cols-2">
@@ -29,8 +29,7 @@ export function ClubGoals() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm leading-6 text-neutral-600 dark:text-neutral-300">
-                  각 목표는 프로젝트 규모와 팀 구성에 맞춰 유연하게 다룰 수
-                  있습니다.
+                  할 수 있다고 믿는다면.
                 </p>
               </CardContent>
             </Card>

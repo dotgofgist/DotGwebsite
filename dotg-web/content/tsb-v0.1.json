@@ -1,0 +1,21 @@
+{
+  "slug": "trickcal-shooting-balddagu",
+  "title": "Trickcal : Shooting Balddagu",
+  "version": "v0.1",
+  "downloadSha256": "9dcd2536f2a37f4349331a446c47a87985cf15d2d2cc7c9150e5e0847ffc5cc7",
+  "summary": "트릭컬의 사도들과 함께하는 6 대 6 거점 점령 FPS 팬게임. 15명 캐릭터와 두 전장, 봇 연습을 담은 첫 공개 개발 버전입니다.",
+  "description": "트릭컬의 사도들이 3D FPS 전장에서 만납니다. Trickcal : Shooting Balddagu는 Rust와 Fyrox로 제작한 비공식 팬게임으로, 두 팀이 A와 B 거점을 점령하고 공격과 수비를 교대합니다.\n\n현재 버전: v0.1 — 첫 공개 개발 버전\n개발 시작일: 2026년 11월 12일\n게시일: 2026년 11월 21일\n플랫폼: Windows 10/11 64비트\n제작 환경: Rust · Fyrox 1.0.1\n\nv0.1 주요 기능\n• 15명 사도의 기본 공격·일반 스킬·궁극기와 종족별 공용 스킬\n• 요정왕국 성과 엘프 도시, 최대 6 대 6의 거점 점령 전투\n• 방 생성·코드 참가, 선택형 봇 추가와 혼자 하는 연습\n• 영웅 선택과 볼 당기기, 춤, 1인칭 무기와 전투 HUD\n• 텍스트·음성 채팅, 캐릭터 음성·배경음악·효과음, DotG 계정 연동\n\n실행 방법\nWindows v0.1 다운로드 버튼으로 TSB.exe 하나를 받은 뒤 더블클릭하세요. 별도 설치나 관리자 권한 없이 실행되며, 첫 실행에는 리소스를 자동으로 풉니다. 로그인 또는 게스트로 시작해 방을 만들거나 참가할 수 있습니다. 멀티플레이 참가자는 같은 v0.1 빌드를 사용해야 합니다.\n\n개발 상태\n현재까지 구현한 내용을 공개하는 프로토타입입니다. 다른 PC 사이의 실제 인터넷 대전과 전체 회귀 검증은 완료되지 않았으며, 밸런스·모션·충돌·UI를 계속 개선하고 있습니다. 구체적인 검증 결과와 알려진 제한은 GitHub v0.1 릴리즈 노트에서 확인할 수 있습니다.\n\n원작 트릭컬의 캐릭터·로고·음성·음악 등 관련 권리는 EPID Games 및 각 권리자에게 있습니다. 본 프로젝트는 비공식 팬게임이며 공식 서비스와 무관합니다. 대표 이미지는 기존 게임 아트를 참고한 AI 생성 홍보 일러스트로 실제 플레이 화면이 아닙니다.",
+  "status": "developing",
+  "publicationStatus": "published",
+  "startedAt": "2026-11-12",
+  "releasedAt": "2026-11-21",
+  "publishedAt": "2026-11-21T00:00:00+09:00",
+  "tags": ["FPS", "6 대 6", "팬게임", "Rust", "Fyrox", "Windows", "v0.1"],
+  "cover": "/images/projects/tsb-v0.1.png",
+  "members": [],
+  "links": [
+    { "type": "download", "label": "Windows v0.1 다운로드", "href": "https://github.com/pinata0/Fyrox-TSB/releases/download/v0.1/TSB.exe?build=9dcd2536f2a3" },
+    { "type": "github", "label": "GitHub 저장소", "href": "https://github.com/pinata0/Fyrox-TSB" },
+    { "type": "website", "label": "v0.1 릴리즈 노트", "href": "https://github.com/pinata0/Fyrox-TSB/releases/tag/v0.1" }
+  ]
+}
